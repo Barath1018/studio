@@ -1,4 +1,4 @@
-'use client';
+'use server';
 
 import {
   CheckCircle,
@@ -13,8 +13,19 @@ import { MonthlySalesPerformanceChart } from '@/components/dashboard/monthly-sal
 import { ProfitTrendAnalysisChart } from '@/components/dashboard/profit-trend-analysis-chart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { generateBusinessMetrics } from '@/ai/flows/generate-business-metrics';
 
-export default function Dashboard() {
+const iconMap = {
+  'Total Revenue': <DollarSign className="h-6 w-6 text-muted-foreground" />,
+  'Total Expenses': <CreditCard className="h-6 w-6 text-muted-foreground" />,
+  'Net Profit': <TrendingUp className="h-6 w-6 text-muted-foreground" />,
+  'Avg. Order Value': <Tag className="h-6 w-6 text-muted-foreground" />,
+};
+
+export default async function Dashboard() {
+  const metrics = await generateBusinessMetrics();
+  const { kpis, chartData, growthAlert } = metrics;
+
   return (
     <>
       <div className="flex-1">
@@ -26,38 +37,21 @@ export default function Dashboard() {
       <main className="flex flex-1 flex-col gap-4 pt-4 sm:px-6 sm:py-0 md:gap-8">
         <Alert className="bg-green-50 border-green-200 text-green-800 [&>svg]:text-green-600">
           <CheckCircle className="h-4 w-4" />
-          <AlertTitle className="font-semibold">
-            Strong Revenue Growth
-          </AlertTitle>
+          <AlertTitle className="font-semibold">{growthAlert.title}</AlertTitle>
           <AlertDescription className="text-sm">
-            Revenue increased by 12.6% this month. Great job!
+            {growthAlert.description}
           </AlertDescription>
         </Alert>
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-          <KpiCard
-            title="Total Revenue"
-            value="$619,983"
-            change="+$12,649 vs last month"
-            icon={<DollarSign className="h-6 w-6 text-muted-foreground" />}
-          />
-          <KpiCard
-            title="Total Expenses"
-            value="$442,698"
-            change="+$1,312 vs last month"
-            icon={<CreditCard className="h-6 w-6 text-muted-foreground" />}
-          />
-          <KpiCard
-            title="Net Profit"
-            value="$177,285"
-            change="+$6,325 vs last month"
-            icon={<TrendingUp className="h-6 w-6 text-muted-foreground" />}
-          />
-          <KpiCard
-            title="Avg. Order Value"
-            value="+87.5%"
-            change="+2.4% vs last month"
-            icon={<Tag className="h-6 w-6 text-muted-foreground" />}
-          />
+          {kpis.map((kpi) => (
+            <KpiCard
+              key={kpi.title}
+              title={kpi.title}
+              value={kpi.value}
+              change={kpi.change}
+              icon={iconMap[kpi.title as keyof typeof iconMap]}
+            />
+          ))}
         </div>
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2">
           <Card className="rounded-2xl shadow-sm">
@@ -65,7 +59,7 @@ export default function Dashboard() {
               <CardTitle>Monthly Sales Performance</CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
-              <MonthlySalesPerformanceChart />
+              <MonthlySalesPerformanceChart data={chartData} />
             </CardContent>
           </Card>
           <Card className="rounded-2xl shadow-sm">
@@ -73,7 +67,7 @@ export default function Dashboard() {
               <CardTitle>Profit Trend Analysis</CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
-              <ProfitTrendAnalysisChart />
+              <ProfitTrendAnalysisChart data={chartData} />
             </CardContent>
           </Card>
         </div>

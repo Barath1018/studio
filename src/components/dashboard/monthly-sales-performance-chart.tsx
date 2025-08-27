@@ -7,21 +7,6 @@ import {
   type ChartConfig,
 } from '@/components/ui/chart';
 
-const chartData = [
-  { month: 'Jan', sales: 45000 },
-  { month: 'Feb', sales: 52000 },
-  { month: 'Mar', sales: 63000 },
-  { month: 'Apr', sales: 58000 },
-  { month: 'May', sales: 47000 },
-  { month: 'Jun', sales: 49000 },
-  { month: 'Jul', sales: 54000 },
-  { month: 'Aug', sales: 60000 },
-  { month: 'Sep', sales: 56000 },
-  { month: 'Oct', sales: 59000 },
-  { month: 'Nov', sales: 65000 },
-  { month: 'Dec', sales: 72000 },
-];
-
 const chartConfig = {
   sales: {
     label: 'Sales',
@@ -29,12 +14,16 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function MonthlySalesPerformanceChart() {
+interface MonthlySalesPerformanceChartProps {
+  data: { month: string; sales: number }[];
+}
+
+export function MonthlySalesPerformanceChart({ data }: MonthlySalesPerformanceChartProps) {
   return (
     <ChartContainer config={chartConfig} className="h-[300px] w-full">
       <BarChart 
         accessibilityLayer 
-        data={chartData} 
+        data={data} 
         margin={{ top: 20, right: 20, left: -10, bottom: 5 }}
       >
         <CartesianGrid vertical={false} />

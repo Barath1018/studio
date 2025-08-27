@@ -1,3 +1,5 @@
+'use server';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -10,41 +12,12 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Download, FileText } from 'lucide-react';
+import { generateBusinessMetrics } from '@/ai/flows/generate-business-metrics';
 
-const reports = [
-  {
-    name: 'Q1 2024 Financial Summary',
-    date: '2024-04-15',
-    type: 'Financial',
-    status: 'Final',
-  },
-  {
-    name: 'Monthly Sales Report - March',
-    date: '2024-04-05',
-    type: 'Sales',
-    status: 'Final',
-  },
-  {
-    name: 'Customer Acquisition Analysis',
-    date: '2024-03-28',
-    type: 'Marketing',
-    status: 'Final',
-  },
-  {
-    name: 'Q2 2024 Sales Forecast',
-    date: '2024-03-20',
-    type: 'Forecasting',
-    status: 'Draft',
-  },
-  {
-    name: 'Website Performance Review',
-    date: '2024-03-10',
-    type: 'Analytics',
-    status: 'Final',
-  },
-];
 
-export default function ReportsPage() {
+export default async function ReportsPage() {
+  const { reports } = await generateBusinessMetrics();
+  
   return (
     <>
       <div className="flex-1">

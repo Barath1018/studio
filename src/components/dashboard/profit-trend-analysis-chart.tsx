@@ -7,21 +7,6 @@ import {
   type ChartConfig,
 } from '@/components/ui/chart';
 
-const chartData = [
-  { month: 'Jan', profit: 12000 },
-  { month: 'Feb', profit: 15000 },
-  { month: 'Mar', profit: 18000 },
-  { month: 'Apr', profit: 17000 },
-  { month: 'May', profit: 22000 },
-  { month: 'Jun', profit: 28000 },
-  { month: 'Jul', profit: 24000 },
-  { month: 'Aug', profit: 20000 },
-  { month: 'Sep', profit: 18000 },
-  { month: 'Oct', profit: 8000 },
-  { month: 'Nov', profit: 10000 },
-  { month: 'Dec', profit: 17000 },
-];
-
 const chartConfig = {
   profit: {
     label: 'Profit',
@@ -29,12 +14,16 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ProfitTrendAnalysisChart() {
+interface ProfitTrendAnalysisChartProps {
+    data: { month: string; profit: number }[];
+}
+
+export function ProfitTrendAnalysisChart({ data }: ProfitTrendAnalysisChartProps) {
   return (
     <ChartContainer config={chartConfig} className="h-[300px] w-full">
       <LineChart
         accessibilityLayer
-        data={chartData}
+        data={data}
         margin={{
           left: -10,
           right: 20,

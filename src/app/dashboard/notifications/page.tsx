@@ -1,3 +1,5 @@
+'use server';
+
 import { Bell, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -8,29 +10,17 @@ import {
   TableRow,
   TableHead,
 } from '@/components/ui/table';
+import { generateBusinessMetrics } from '@/ai/flows/generate-business-metrics';
 
-const notifications = [
-  {
-    icon: <CheckCircle className="h-5 w-5 text-green-500" />,
-    title: 'Q1 Report Generated',
-    description: 'Your quarterly financial summary for Q1 2024 is ready.',
-    time: '2 hours ago',
-  },
-  {
-    icon: <AlertTriangle className="h-5 w-5 text-yellow-500" />,
-    title: 'High Server Load',
-    description: 'Server CPU usage is at 92%. Consider scaling resources.',
-    time: '1 day ago',
-  },
-  {
-    icon: <Bell className="h-5 w-5 text-blue-500" />,
-    title: 'New Integration',
-    description: 'Salesforce has been successfully integrated.',
-    time: '3 days ago',
-  },
-];
+const iconMap = {
+    success: <CheckCircle className="h-5 w-5 text-green-500" />,
+    warning: <AlertTriangle className="h-5 w-5 text-yellow-500" />,
+    info: <Bell className="h-5 w-5 text-blue-500" />,
+};
 
-export default function NotificationsPage() {
+export default async function NotificationsPage() {
+  const { notifications } = await generateBusinessMetrics();
+
   return (
     <>
       <div className="flex-1">
@@ -56,7 +46,7 @@ export default function NotificationsPage() {
               <TableBody>
                 {notifications.map((notification, index) => (
                   <TableRow key={index}>
-                    <TableCell>{notification.icon}</TableCell>
+                    <TableCell>{iconMap[notification.type]}</TableCell>
                     <TableCell>
                       <div className="font-medium">{notification.title}</div>
                       <div className="text-sm text-muted-foreground">
