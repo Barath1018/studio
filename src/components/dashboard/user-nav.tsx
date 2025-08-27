@@ -21,17 +21,17 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage src="https://picsum.photos/40/40" alt="John Doe" data-ai-hint="user avatar" />
-            <AvatarFallback>JD</AvatarFallback>
+            <AvatarImage src="https://picsum.photos/40/40" alt="Admin User" data-ai-hint="user avatar" />
+            <AvatarFallback>AU</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">John Doe</p>
+            <p className="text-sm font-medium leading-none">Admin User</p>
             <p className="text-xs leading-none text-muted-foreground">
-              john.doe@example.com
+              admin@insightedge.com
             </p>
           </div>
         </DropdownMenuLabel>
