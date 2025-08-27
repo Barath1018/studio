@@ -40,11 +40,7 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   const isActive = (path: string) => {
-    // This will now correctly match /dashboard for the home page
-    if (path === '/dashboard') {
-      return pathname === path;
-    }
-    return pathname.startsWith(path);
+    return pathname === path || (path !== '/dashboard' && pathname.startsWith(path));
   };
 
   return (
@@ -62,31 +58,31 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/reports" isActive={isActive('/reports')}>
+              <SidebarMenuButton href="/dashboard/reports" isActive={isActive('/dashboard/reports')}>
                 <FileText />
                 Reports
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/analytics" isActive={isActive('/analytics')}>
+              <SidebarMenuButton href="/dashboard/analytics" isActive={isActive('/dashboard/analytics')}>
                 <TrendingUp />
                 Analytics
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/notifications" isActive={isActive('/notifications')}>
+              <SidebarMenuButton href="/dashboard/notifications" isActive={isActive('/dashboard/notifications')}>
                 <Bell />
                 Notifications
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/settings" isActive={isActive('/settings')}>
+              <SidebarMenuButton href="/dashboard/settings" isActive={isActive('/dashboard/settings')}>
                 <Settings />
                 Settings
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/help" isActive={isActive('/help')}>
+              <SidebarMenuButton href="/dashboard/help" isActive={isActive('/dashboard/help')}>
                 <HelpCircle />
                 Help
               </SidebarMenuButton>
