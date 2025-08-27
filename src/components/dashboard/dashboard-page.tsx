@@ -38,6 +38,7 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -47,6 +48,7 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
       } else {
         router.push('/login');
       }
+      setLoading(false);
     });
     return () => unsubscribe();
   }, [router]);
@@ -62,7 +64,7 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
   const userEmail = user?.email || '';
   const userName = user?.displayName || user?.email?.split('@')[0] || 'User';
 
-  if (!user) {
+  if (loading) {
     return null; // or a loading spinner
   }
 
