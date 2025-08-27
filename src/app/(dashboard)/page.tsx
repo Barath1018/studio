@@ -9,7 +9,9 @@ import {
   Users,
   Upload,
 } from 'lucide-react';
-
+import Papa from 'papaparse';
+import { useToast } from '@/hooks/use-toast';
+import { analyzeSheet } from '@/ai/flows/analyze-sheet';
 import { KpiCard } from '@/components/dashboard/kpi-card';
 import { MonthlySalesPerformanceChart } from '@/components/dashboard/monthly-sales-performance-chart';
 import { ProfitTrendAnalysisChart } from '@/components/dashboard/profit-trend-analysis-chart';
@@ -18,7 +20,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { BusinessMetrics } from '@/ai/schemas/business-metrics';
-import React from 'react';
+import React, { useState } from 'react';
 
 const iconMap: { [key: string]: React.ReactNode } = {
   'Total Revenue': <DollarSign className="h-6 w-6 text-muted-foreground" />,
@@ -29,20 +31,66 @@ const iconMap: { [key: string]: React.ReactNode } = {
 };
 
 interface DashboardProps {
-    metrics: BusinessMetrics | null;
-    loading: boolean;
-    file: File | null;
-    handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    handleFileUpload: () => void;
+  metrics: BusinessMetrics | null;
+  handleMetricsChange: (metrics: BusinessMetrics | null) => void;
 }
 
 export default function Dashboard({
-    metrics,
-    loading,
-    file,
-    handleFileChange,
-    handleFileUpload
+  metrics,
+  handleMetricsChange,
 }: Partial<DashboardProps>) {
+  const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const { toast } = useToast();
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setFile(event.target.files[0]);
+    }
+  };
+
+  const handleFileUpload = async () => {
+    if (!file) {
+      toast({
+        title: 'No file selected',
+        description: 'Please select a CSV file to upload.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setLoading(true);
+    handleMetricsChange?.(null);
+
+    Papa.parse(file, {
+      header: true,
+      complete: async (results) => {
+        try {
+          const csvText = Papa.unparse(results.data);
+          const generatedMetrics = await analyzeSheet({ sheet: csvText });
+          handleMetricsChange?.(generatedMetrics);
+        } catch (error) {
+          console.error('Error analyzing sheet:', error);
+          toast({
+            title: 'Analysis Failed',
+            description: 'Could not analyze the provided sheet.',
+            variant: 'destructive',
+          });
+        } finally {
+          setLoading(false);
+        }
+      },
+      error: (error: any) => {
+        console.error('Error parsing CSV:', error);
+        toast({
+          title: 'Parsing Failed',
+          description: error.message,
+          variant: 'destructive',
+        });
+        setLoading(false);
+      },
+    });
+  };
 
   return (
     <>
@@ -63,9 +111,15 @@ export default function Dashboard({
           </CardHeader>
           <CardContent className="flex flex-col sm:flex-row items-start gap-4">
             <div className="flex-1 w-full">
-              <Input type="file" accept=".csv" onChange={handleFileChange} className="w-full" />
-               <p className="text-xs text-muted-foreground mt-1">
-                Please provide a CSV with columns like 'Date', 'Product', 'Revenue', 'Expenses', etc.
+              <Input
+                type="file"
+                accept=".csv"
+                onChange={handleFileChange}
+                className="w-full"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Please provide a CSV with columns like 'Date', 'Product',
+                'Revenue', 'Expenses', etc.
               </p>
             </div>
             <Button onClick={handleFileUpload} disabled={loading || !file}>
@@ -85,7 +139,9 @@ export default function Dashboard({
           <>
             <Alert className="bg-green-50 border-green-200 text-green-800 [&>svg]:text-green-600">
               <CheckCircle className="h-4 w-4" />
-              <AlertTitle className="font-semibold">{metrics.growthAlert.title}</AlertTitle>
+              <AlertTitle className="font-semibold">
+                {metrics.growthAlert.title}
+              </AlertTitle>
               <AlertDescription className="text-sm">
                 {metrics.growthAlert.description}
               </AlertDescription>
@@ -97,7 +153,11 @@ export default function Dashboard({
                   title={kpi.title}
                   value={kpi.value}
                   change={kpi.change}
-                  icon={iconMap[kpi.title] || <DollarSign className="h-6 w-6 text-muted-foreground" />}
+                  icon={
+                    iconMap[kpi.title] || (
+                      <DollarSign className="h-6 w-6 text-muted-foreground" />
+                    )
+                  }
                 />
               ))}
             </div>
