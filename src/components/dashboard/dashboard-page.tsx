@@ -12,6 +12,7 @@ import {
   Lightbulb,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
+import Link from 'next/link';
 
 import {
   SidebarProvider,
@@ -40,7 +41,11 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   const isActive = (path: string) => {
-    return pathname === path || (path !== '/dashboard' && pathname.startsWith(path));
+    // Exact match for dashboard, startsWith for others
+    if (path === '/dashboard') {
+      return pathname === path;
+    }
+    return pathname.startsWith(path);
   };
 
   return (
@@ -52,40 +57,52 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" isActive={isActive('/dashboard')}>
-                <Home />
-                Dashboard
-              </SidebarMenuButton>
+              <Link href="/dashboard" passHref>
+                <SidebarMenuButton asChild isActive={isActive('/dashboard')}>
+                  <Home />
+                  Dashboard
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard/reports" isActive={isActive('/dashboard/reports')}>
-                <FileText />
-                Reports
-              </SidebarMenuButton>
+              <Link href="/dashboard/reports" passHref>
+                <SidebarMenuButton asChild isActive={isActive('/dashboard/reports')}>
+                  <FileText />
+                  Reports
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard/analytics" isActive={isActive('/dashboard/analytics')}>
-                <TrendingUp />
-                Analytics
-              </SidebarMenuButton>
+              <Link href="/dashboard/analytics" passHref>
+                <SidebarMenuButton asChild isActive={isActive('/dashboard/analytics')}>
+                  <TrendingUp />
+                  Analytics
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard/notifications" isActive={isActive('/dashboard/notifications')}>
-                <Bell />
-                Notifications
-              </SidebarMenuButton>
+              <Link href="/dashboard/notifications" passHref>
+                <SidebarMenuButton asChild isActive={isActive('/dashboard/notifications')}>
+                  <Bell />
+                  Notifications
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard/settings" isActive={isActive('/dashboard/settings')}>
-                <Settings />
-                Settings
-              </SidebarMenuButton>
+              <Link href="/dashboard/settings" passHref>
+                <SidebarMenuButton asChild isActive={isActive('/dashboard/settings')}>
+                  <Settings />
+                  Settings
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard/help" isActive={isActive('/dashboard/help')}>
-                <HelpCircle />
-                Help
-              </SidebarMenuButton>
+              <Link href="/dashboard/help" passHref>
+                <SidebarMenuButton asChild isActive={isActive('/dashboard/help')}>
+                  <HelpCircle />
+                  Help
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
