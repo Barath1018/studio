@@ -13,6 +13,8 @@ const chartData = [
   { category: 'Electronics', sales: 27500, fill: 'var(--color-electronics)' },
   { category: 'Clothing', sales: 18200, fill: 'var(--color-clothing)' },
   { category: 'Home Goods', sales: 12500, fill: 'var(--color-home-goods)' },
+  { category: 'Toys', sales: 9800, fill: 'var(--color-toys)' },
+  { category: 'Books', sales: 6300, fill: 'var(--color-books)' },
 ];
 
 const chartConfig = {
@@ -30,6 +32,14 @@ const chartConfig = {
   'home-goods': {
     label: 'Home Goods',
     color: 'hsl(var(--chart-3))',
+  },
+  toys: {
+    label: 'Toys',
+    color: 'hsl(var(--chart-4))',
+  },
+  books: {
+    label: 'Books',
+    color: 'hsl(var(--chart-5))',
   },
 } satisfies ChartConfig;
 
