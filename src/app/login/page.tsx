@@ -13,7 +13,7 @@ export default function LoginPage() {
 
   const handleLogin = () => {
     // In a real application, you would handle authentication here.
-    router.push('/');
+    router.push('/dashboard');
   };
 
   return (

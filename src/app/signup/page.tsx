@@ -19,7 +19,7 @@ export default function SignupPage() {
   const handleCreateAccount = () => {
     // In a real application, you would handle form submission,
     // validation, and user creation here.
-    router.push('/');
+    router.push('/dashboard');
   };
 
   return (

@@ -40,7 +40,11 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   const isActive = (path: string) => {
-    return pathname === path;
+    // This will now correctly match /dashboard for the home page
+    if (path === '/dashboard') {
+      return pathname === path;
+    }
+    return pathname.startsWith(path);
   };
 
   return (
@@ -52,7 +56,7 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/" isActive={isActive('/')}>
+              <SidebarMenuButton href="/dashboard" isActive={isActive('/dashboard')}>
                 <Home />
                 Dashboard
               </SidebarMenuButton>
