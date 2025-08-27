@@ -1,4 +1,4 @@
-'use client'; // This page is now client-side to receive metrics from dashboard
+'use client'; 
 
 import { Bell, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,7 +26,7 @@ interface NotificationsPageProps {
   }[];
 }
 
-export default function NotificationsPage({ notifications = [] }: Partial<NotificationsPageProps>) {
+export default function NotificationsPage({ notifications }: Partial<NotificationsPageProps>) {
   if (!notifications || notifications.length === 0) {
     return (
        <div className="flex flex-col gap-4">

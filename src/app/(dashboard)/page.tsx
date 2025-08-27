@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import Papa from 'papaparse';
 import {
   CheckCircle,
   CreditCard,
@@ -19,9 +17,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
-import { analyzeSheet } from '@/ai/flows/analyze-sheet';
 import type { BusinessMetrics } from '@/ai/schemas/business-metrics';
+import React from 'react';
 
 const iconMap: { [key: string]: React.ReactNode } = {
   'Total Revenue': <DollarSign className="h-6 w-6 text-muted-foreground" />,
@@ -31,60 +28,21 @@ const iconMap: { [key: string]: React.ReactNode } = {
   'Active Customers': <Users className="h-6 w-6 text-muted-foreground" />,
 };
 
-export default function Dashboard() {
-  const [metrics, setMetrics] = useState<BusinessMetrics | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
-  const { toast } = useToast();
+interface DashboardProps {
+    metrics: BusinessMetrics | null;
+    loading: boolean;
+    file: File | null;
+    handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    handleFileUpload: () => void;
+}
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setFile(event.target.files[0]);
-    }
-  };
-
-  const handleFileUpload = async () => {
-    if (!file) {
-      toast({
-        title: 'No file selected',
-        description: 'Please select a CSV file to upload.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    setLoading(true);
-    setMetrics(null);
-
-    Papa.parse(file, {
-      header: true,
-      complete: async (results) => {
-        try {
-          const csvText = Papa.unparse(results.data);
-          const generatedMetrics = await analyzeSheet({ sheet: csvText });
-          setMetrics(generatedMetrics);
-        } catch (error) {
-          console.error('Error analyzing sheet:', error);
-          toast({
-            title: 'Analysis Failed',
-            description: 'Could not analyze the provided sheet.',
-            variant: 'destructive',
-          });
-        } finally {
-          setLoading(false);
-        }
-      },
-      error: (error: any) => {
-        console.error('Error parsing CSV:', error);
-        toast({
-          title: 'Parsing Failed',
-          description: error.message,
-          variant: 'destructive',
-        });
-        setLoading(false);
-      },
-    });
-  };
+export default function Dashboard({
+    metrics,
+    loading,
+    file,
+    handleFileChange,
+    handleFileUpload
+}: Partial<DashboardProps>) {
 
   return (
     <>

@@ -1,4 +1,4 @@
-'use client'; // This page is now client-side to receive metrics from dashboard
+'use client'; 
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -13,10 +13,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Download, FileText } from 'lucide-react';
 
-// This component now expects reports to be passed as props.
-// On its own, it will just show a placeholder.
-// The main dashboard page will be responsible for passing data to it,
-// or it could be adapted to have its own data-fetching logic.
 
 interface ReportsPageProps {
   reports: {
@@ -27,7 +23,7 @@ interface ReportsPageProps {
   }[];
 }
 
-export default function ReportsPage({ reports = [] }: Partial<ReportsPageProps>) {
+export default function ReportsPage({ reports }: Partial<ReportsPageProps>) {
   if (!reports || reports.length === 0) {
     return (
        <div className="flex flex-col gap-4">
