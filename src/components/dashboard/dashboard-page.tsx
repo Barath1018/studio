@@ -9,12 +9,13 @@ import {
   Settings,
   TrendingUp,
   Search,
+  User,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 
 import {
@@ -37,7 +38,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 export default function DashboardPage({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<onAuthStateChanged | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
