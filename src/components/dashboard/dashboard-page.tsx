@@ -59,48 +59,60 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
             <SidebarMenuItem>
               <Link href="/dashboard" passHref>
                 <SidebarMenuButton asChild isActive={isActive('/dashboard')}>
-                  <Home />
-                  Dashboard
+                  <a>
+                    <Home />
+                    Dashboard
+                  </a>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <Link href="/dashboard/reports" passHref>
                 <SidebarMenuButton asChild isActive={isActive('/dashboard/reports')}>
-                  <FileText />
-                  Reports
+                  <a>
+                    <FileText />
+                    Reports
+                  </a>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <Link href="/dashboard/analytics" passHref>
                 <SidebarMenuButton asChild isActive={isActive('/dashboard/analytics')}>
-                  <TrendingUp />
-                  Analytics
+                  <a>
+                    <TrendingUp />
+                    Analytics
+                  </a>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <Link href="/dashboard/notifications" passHref>
                 <SidebarMenuButton asChild isActive={isActive('/dashboard/notifications')}>
-                  <Bell />
-                  Notifications
+                  <a>
+                    <Bell />
+                    Notifications
+                  </a>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <Link href="/dashboard/settings" passHref>
                 <SidebarMenuButton asChild isActive={isActive('/dashboard/settings')}>
-                  <Settings />
-                  Settings
+                  <a>
+                    <Settings />
+                    Settings
+                  </a>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <Link href="/dashboard/help" passHref>
                 <SidebarMenuButton asChild isActive={isActive('/dashboard/help')}>
-                  <HelpCircle />
-                  Help
+                  <a>
+                    <HelpCircle />
+                    Help
+                  </a>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
