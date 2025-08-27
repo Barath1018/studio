@@ -69,10 +69,10 @@ export function UserNav({ name, email }: UserNavProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <Link href="/dashboard/settings">
+          <Link href="/dashboard/settings" passHref>
             <DropdownMenuItem>Profile</DropdownMenuItem>
           </Link>
-          <Link href="/dashboard/settings">
+          <Link href="/dashboard/settings" passHref>
             <DropdownMenuItem>Settings</DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>

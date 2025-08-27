@@ -77,74 +77,74 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <Link href="/dashboard" passHref legacyBehavior>
+              <Link href="/dashboard" passHref>
                 <SidebarMenuButton asChild isActive={isActive('/dashboard')}>
-                  <a>
+                  <span>
                     <Home />
                     Dashboard
-                  </a>
+                  </span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/dashboard/reports" passHref legacyBehavior>
+              <Link href="/dashboard/reports" passHref>
                 <SidebarMenuButton
                   asChild
                   isActive={isActive('/dashboard/reports')}
                 >
-                  <a>
+                  <span>
                     <FileText />
                     Reports
-                  </a>
+                  </span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/dashboard/analytics" passHref legacyBehavior>
+              <Link href="/dashboard/analytics" passHref>
                 <SidebarMenuButton
                   asChild
                   isActive={isActive('/dashboard/analytics')}
                 >
-                  <a>
+                  <span>
                     <TrendingUp />
                     Analytics
-                  </a>
+                  </span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/dashboard/notifications" passHref legacyBehavior>
+              <Link href="/dashboard/notifications" passHref>
                 <SidebarMenuButton
                   asChild
                   isActive={isActive('/dashboard/notifications')}
                 >
-                  <a>
+                  <span>
                     <Bell />
                     Notifications
-                  </a>
+                  </span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/dashboard/settings" passHref legacyBehavior>
+              <Link href="/dashboard/settings" passHref>
                 <SidebarMenuButton
                   asChild
                   isActive={isActive('/dashboard/settings')}
                 >
-                  <a>
+                  <span>
                     <Settings />
                     Settings
-                  </a>
+                  </span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/dashboard/help" passHref legacyBehavior>
+              <Link href="/dashboard/help" passHref>
                 <SidebarMenuButton asChild isActive={isActive('/dashboard/help')}>
-                  <a>
+                  <span>
                     <HelpCircle />
                     Help
-                  </a>
+                  </span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
