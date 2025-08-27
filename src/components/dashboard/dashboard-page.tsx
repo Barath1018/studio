@@ -5,40 +5,36 @@ import {
   FileText,
   HelpCircle,
   Home,
-  LineChart,
-  Search,
+  Lightbulb,
   Settings,
   TrendingUp,
-  Lightbulb,
+  Search,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 import {
-  SidebarProvider,
   Sidebar,
-  SidebarHeader,
   SidebarContent,
-  SidebarTrigger,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarInset,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarFooter,
-  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { Input } from '@/components/ui/input';
 import { UserNav } from './user-nav';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '../ui/card';
-import { usePathname } from 'next/navigation';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 export default function DashboardPage({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const email = searchParams.get('email');
 
   const isActive = (path: string) => {
     // Exact match for dashboard, startsWith for others
@@ -47,6 +43,9 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
     }
     return pathname.startsWith(path);
   };
+
+  const userEmail = email || 'user@example.com';
+  const userName = email ? email.split('@')[0] : 'User';
 
   return (
     <SidebarProvider>
@@ -68,7 +67,10 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <Link href="/dashboard/reports" passHref>
-                <SidebarMenuButton asChild isActive={isActive('/dashboard/reports')}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive('/dashboard/reports')}
+                >
                   <a>
                     <FileText />
                     Reports
@@ -78,7 +80,10 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <Link href="/dashboard/analytics" passHref>
-                <SidebarMenuButton asChild isActive={isActive('/dashboard/analytics')}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive('/dashboard/analytics')}
+                >
                   <a>
                     <TrendingUp />
                     Analytics
@@ -88,7 +93,10 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <Link href="/dashboard/notifications" passHref>
-                <SidebarMenuButton asChild isActive={isActive('/dashboard/notifications')}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive('/dashboard/notifications')}
+                >
                   <a>
                     <Bell />
                     Notifications
@@ -98,7 +106,10 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <Link href="/dashboard/settings" passHref>
-                <SidebarMenuButton asChild isActive={isActive('/dashboard/settings')}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive('/dashboard/settings')}
+                >
                   <a>
                     <Settings />
                     Settings
@@ -129,7 +140,7 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
               growth.
             </CardContent>
           </Card>
-          <UserNav />
+          <UserNav email={userEmail} name={userName} />
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
@@ -147,7 +158,7 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
             <div className="ml-auto flex items-center gap-4">
               <Bell className="h-5 w-5 text-muted-foreground cursor-pointer" />
               <div className="hidden md:block">
-                <UserNav />
+                <UserNav email={userEmail} name={userName} />
               </div>
             </div>
           </header>
