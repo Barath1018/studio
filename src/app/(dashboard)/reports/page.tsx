@@ -1,3 +1,5 @@
+'use client'; // This page is now client-side to receive metrics from dashboard
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -11,40 +13,42 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Download, FileText } from 'lucide-react';
 
-const reports = [
-  {
-    name: 'Q1 2024 Financial Summary',
-    date: '2024-04-15',
-    type: 'Financial',
-    status: 'Final',
-  },
-  {
-    name: 'Monthly Sales Report - March',
-    date: '2024-04-05',
-    type: 'Sales',
-    status: 'Final',
-  },
-  {
-    name: 'Customer Acquisition Analysis',
-    date: '2024-03-28',
-    type: 'Marketing',
-    status: 'Final',
-  },
-  {
-    name: 'Q2 2024 Sales Forecast',
-    date: '2024-03-20',
-    type: 'Forecasting',
-    status: 'Draft',
-  },
-  {
-    name: 'Website Performance Review',
-    date: '2024-03-10',
-    type: 'Analytics',
-    status: 'Final',
-  },
-];
+// This component now expects reports to be passed as props.
+// On its own, it will just show a placeholder.
+// The main dashboard page will be responsible for passing data to it,
+// or it could be adapted to have its own data-fetching logic.
 
-export default function ReportsPage() {
+interface ReportsPageProps {
+  reports: {
+    name: string;
+    date: string;
+    type: string;
+    status: 'Final' | 'Draft';
+  }[];
+}
+
+export default function ReportsPage({ reports = [] }: Partial<ReportsPageProps>) {
+  if (!reports || reports.length === 0) {
+    return (
+       <div className="flex flex-col gap-4">
+        <div className="flex-1">
+          <h1 className="text-2xl font-semibold">Reports</h1>
+          <p className="text-sm text-muted-foreground">
+            Download and view your generated business reports.
+          </p>
+        </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>Generated Reports</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-muted-foreground">Upload a CSV on the dashboard page to see your reports.</p>
+            </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <>
       <div className="flex-1">

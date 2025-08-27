@@ -1,3 +1,5 @@
+'use client'; // This page is now client-side to receive metrics from dashboard
+
 import { Bell, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -9,28 +11,42 @@ import {
   TableHead,
 } from '@/components/ui/table';
 
-const notifications = [
-  {
-    icon: <CheckCircle className="h-5 w-5 text-green-500" />,
-    title: 'Q1 Report Generated',
-    description: 'Your quarterly financial summary for Q1 2024 is ready.',
-    time: '2 hours ago',
-  },
-  {
-    icon: <AlertTriangle className="h-5 w-5 text-yellow-500" />,
-    title: 'High Server Load',
-    description: 'Server CPU usage is at 92%. Consider scaling resources.',
-    time: '1 day ago',
-  },
-  {
-    icon: <Bell className="h-5 w-5 text-blue-500" />,
-    title: 'New Integration',
-    description: 'Salesforce has been successfully integrated.',
-    time: '3 days ago',
-  },
-];
+const iconMap = {
+    success: <CheckCircle className="h-5 w-5 text-green-500" />,
+    warning: <AlertTriangle className="h-5 w-5 text-yellow-500" />,
+    info: <Bell className="h-5 w-5 text-blue-500" />,
+};
 
-export default function NotificationsPage() {
+interface NotificationsPageProps {
+  notifications: {
+    title: string;
+    description: string;
+    time: string;
+    type: 'success' | 'warning' | 'info';
+  }[];
+}
+
+export default function NotificationsPage({ notifications = [] }: Partial<NotificationsPageProps>) {
+  if (!notifications || notifications.length === 0) {
+    return (
+       <div className="flex flex-col gap-4">
+        <div className="flex-1">
+          <h1 className="text-2xl font-semibold">Notifications</h1>
+          <p className="text-sm text-muted-foreground">
+            Stay updated with important events and alerts.
+          </p>
+        </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>Recent Notifications</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-muted-foreground">Upload a CSV on the dashboard page to see your notifications.</p>
+            </CardContent>
+        </Card>
+      </div>
+    )
+  }
   return (
     <>
       <div className="flex-1">
@@ -56,7 +72,7 @@ export default function NotificationsPage() {
               <TableBody>
                 {notifications.map((notification, index) => (
                   <TableRow key={index}>
-                    <TableCell>{notification.icon}</TableCell>
+                    <TableCell>{iconMap[notification.type]}</TableCell>
                     <TableCell>
                       <div className="font-medium">{notification.title}</div>
                       <div className="text-sm text-muted-foreground">

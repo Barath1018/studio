@@ -1,8 +1,35 @@
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MonthlySalesPerformanceChart } from '@/components/dashboard/monthly-sales-performance-chart';
 import { ProfitTrendAnalysisChart } from '@/components/dashboard/profit-trend-analysis-chart';
 
-export default function AnalyticsPage() {
+interface AnalyticsPageProps {
+  chartData: { month: string; sales: number, profit: number }[];
+}
+
+
+export default function AnalyticsPage({ chartData }: Partial<AnalyticsPageProps>) {
+  if (!chartData) {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex-1">
+          <h1 className="text-2xl font-semibold">Analytics</h1>
+          <p className="text-sm text-muted-foreground">
+            Deep dive into your business performance.
+          </p>
+        </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>Analytics Data</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-muted-foreground">Upload a CSV on the dashboard page to see your analytics.</p>
+            </CardContent>
+        </Card>
+      </div>
+    )
+  }
   return (
     <>
       <div className="flex-1">
@@ -18,7 +45,7 @@ export default function AnalyticsPage() {
               <CardTitle>Monthly Sales Performance</CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
-              <MonthlySalesPerformanceChart />
+              <MonthlySalesPerformanceChart data={chartData} />
             </CardContent>
           </Card>
           <Card className="rounded-2xl shadow-sm">
@@ -26,7 +53,7 @@ export default function AnalyticsPage() {
               <CardTitle>Profit Trend Analysis</CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
-              <ProfitTrendAnalysisChart />
+              <ProfitTrendAnalysisChart data={chartData} />
             </CardContent>
           </Card>
         </div>
