@@ -52,7 +52,7 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" isActive={isActive('/dashboard')}>
+              <SidebarMenuButton href="/" isActive={isActive('/')}>
                 <Home />
                 Dashboard
               </SidebarMenuButton>
