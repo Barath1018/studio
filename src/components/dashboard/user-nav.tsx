@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -16,6 +16,7 @@ import { getAuth, signOut } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { User } from 'lucide-react';
 
 interface UserNavProps {
   name: string;
@@ -49,12 +50,9 @@ export function UserNav({ name, email }: UserNavProps) {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage
-              src="https://picsum.photos/40/40"
-              alt={name}
-              data-ai-hint="user avatar"
-            />
-            <AvatarFallback>{fallback}</AvatarFallback>
+            <AvatarFallback>
+              <User className="h-5 w-5" />
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -69,10 +67,10 @@ export function UserNav({ name, email }: UserNavProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <Link href="/dashboard/settings" passHref>
+          <Link href="/dashboard/settings">
             <DropdownMenuItem>Profile</DropdownMenuItem>
           </Link>
-          <Link href="/dashboard/settings" passHref>
+          <Link href="/dashboard/settings">
             <DropdownMenuItem>Settings</DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>
