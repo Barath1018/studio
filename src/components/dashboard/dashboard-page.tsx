@@ -12,7 +12,11 @@ import {
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { app } from '@/lib/firebase';
+
 
 import {
   Sidebar,
@@ -34,7 +38,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 export default function DashboardPage({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const email = searchParams.get('email');
+
+  useEffect(() => {
+    const auth = getAuth(app);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push('/login');
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
 
   const isActive = (path: string) => {
     // Exact match for dashboard, startsWith for others
@@ -56,7 +71,7 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <Link href="/dashboard" passHref>
+              <Link href="/dashboard" passHref legacyBehavior>
                 <SidebarMenuButton asChild isActive={isActive('/dashboard')}>
                   <a>
                     <Home />
@@ -66,7 +81,7 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/dashboard/reports" passHref>
+              <Link href="/dashboard/reports" passHref legacyBehavior>
                 <SidebarMenuButton
                   asChild
                   isActive={isActive('/dashboard/reports')}
@@ -79,7 +94,7 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/dashboard/analytics" passHref>
+              <Link href="/dashboard/analytics" passHref legacyBehavior>
                 <SidebarMenuButton
                   asChild
                   isActive={isActive('/dashboard/analytics')}
@@ -92,7 +107,7 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/dashboard/notifications" passHref>
+              <Link href="/dashboard/notifications" passHref legacyBehavior>
                 <SidebarMenuButton
                   asChild
                   isActive={isActive('/dashboard/notifications')}
@@ -105,7 +120,7 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/dashboard/settings" passHref>
+              <Link href="/dashboard/settings" passHref legacyBehavior>
                 <SidebarMenuButton
                   asChild
                   isActive={isActive('/dashboard/settings')}
@@ -118,7 +133,7 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/dashboard/help" passHref>
+              <Link href="/dashboard/help" passHref legacyBehavior>
                 <SidebarMenuButton asChild isActive={isActive('/dashboard/help')}>
                   <a>
                     <HelpCircle />
