@@ -9,6 +9,8 @@ import {
   Search,
   Settings,
   Users,
+  DollarSign,
+  ShoppingCart,
 } from 'lucide-react';
 
 import {
@@ -28,9 +30,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { UserNav } from './user-nav';
 import { KpiCard } from './kpi-card';
-import { ChildrenOnboardedChart } from './children-onboarded-chart';
+import { SalesOverTimeChart } from './sales-over-time-chart';
 import { RegionalDistributionChart } from './regional-distribution-chart';
-import { VerificationStatusChart } from './verification-status-chart';
+import { SalesByCategoryChart } from './sales-by-category-chart';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 export default function DashboardPage() {
@@ -51,7 +53,7 @@ export default function DashboardPage() {
             <SidebarMenuItem>
               <SidebarMenuButton href="#">
                 <Users />
-                Children
+                Customers
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
@@ -92,21 +94,21 @@ export default function DashboardPage() {
           <main className="flex flex-1 flex-col gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
               <KpiCard
-                title="Children Onboarded"
-                value="12,345"
+                title="Total Revenue"
+                value="$45,231.89"
                 change="+20.1% from last month"
-                icon={<Users className="h-4 w-4 text-muted-foreground" />}
+                icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
               />
               <KpiCard
-                title="Verified Children"
-                value="10,890"
-                change="+18.1% from last month"
-                icon={<Users className="h-4 w-4 text-muted-foreground" />}
+                title="Sales"
+                value="+12,234"
+                change="+19% from last month"
+                icon={<ShoppingCart className="h-4 w-4 text-muted-foreground" />}
               />
               <KpiCard
-                title="Pending Verification"
-                value="1,455"
-                change="-5.2% from last month"
+                title="New Customers"
+                value="+2350"
+                change="+180.1% from last month"
                 icon={<Users className="h-4 w-4 text-muted-foreground" />}
               />
               <KpiCard
@@ -119,18 +121,18 @@ export default function DashboardPage() {
             <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
               <Card className="xl:col-span-2 rounded-2xl shadow-sm">
                 <CardHeader>
-                  <CardTitle>Onboarding Overview</CardTitle>
+                  <CardTitle>Sales Over Time</CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2">
-                  <ChildrenOnboardedChart />
+                  <SalesOverTimeChart />
                 </CardContent>
               </Card>
               <Card className="rounded-2xl shadow-sm">
                 <CardHeader>
-                  <CardTitle>Verification Status</CardTitle>
+                  <CardTitle>Sales by Category</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <VerificationStatusChart />
+                  <SalesByCategoryChart />
                 </CardContent>
               </Card>
             </div>

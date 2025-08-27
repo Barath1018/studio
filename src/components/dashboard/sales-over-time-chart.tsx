@@ -8,22 +8,22 @@ import {
 } from '@/components/ui/chart';
 
 const chartData = [
-  { month: 'January', children: 186 },
-  { month: 'February', children: 305 },
-  { month: 'March', children: 237 },
-  { month: 'April', children: 273 },
-  { month: 'May', children: 209 },
-  { month: 'June', children: 214 },
+  { month: 'January', sales: 1860 },
+  { month: 'February', sales: 3050 },
+  { month: 'March', sales: 2370 },
+  { month: 'April', sales: 2730 },
+  { month: 'May', sales: 2090 },
+  { month: 'June', sales: 2140 },
 ];
 
 const chartConfig = {
-  children: {
-    label: 'Children',
+  sales: {
+    label: 'Sales',
     color: 'hsl(var(--chart-1))',
   },
 } satisfies ChartConfig;
 
-export function ChildrenOnboardedChart() {
+export function SalesOverTimeChart() {
   return (
     <ChartContainer config={chartConfig} className="h-[300px] w-full">
       <LineChart
@@ -49,9 +49,9 @@ export function ChildrenOnboardedChart() {
           content={<ChartTooltipContent indicator="dot" />}
         />
         <Line
-          dataKey="children"
+          dataKey="sales"
           type="monotone"
-          stroke="var(--color-children)"
+          stroke="var(--color-sales)"
           strokeWidth={2}
           dot={false}
         />

@@ -8,16 +8,16 @@ import {
 } from '@/components/ui/chart';
 
 const chartData = [
-  { region: 'North', children: 1860 },
-  { region: 'East', children: 3050 },
-  { region: 'South', children: 2370 },
-  { region: 'West', children: 2730 },
-  { region: 'Central', children: 2090 },
+  { region: 'North', sales: 18600 },
+  { region: 'East', sales: 30500 },
+  { region: 'South', sales: 23700 },
+  { region: 'West', sales: 27300 },
+  { region: 'Central', sales: 20900 },
 ];
 
 const chartConfig = {
-  children: {
-    label: 'Children',
+  sales: {
+    label: 'Sales',
     color: 'hsl(var(--chart-1))',
   },
 } satisfies ChartConfig;
@@ -37,7 +37,7 @@ export function RegionalDistributionChart() {
           cursor={false}
           content={<ChartTooltipContent indicator="dot" />}
         />
-        <Bar dataKey="children" fill="var(--color-children)" radius={8} />
+        <Bar dataKey="sales" fill="var(--color-sales)" radius={8} />
       </BarChart>
     </ChartContainer>
   );
