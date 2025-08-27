@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,6 +9,13 @@ import { Label } from '@/components/ui/label';
 import { AuthLayout } from '@/components/auth-layout';
 
 export default function LoginPage() {
+  const router = useRouter();
+
+  const handleLogin = () => {
+    // In a real application, you would handle authentication here.
+    router.push('/dashboard');
+  };
+
   return (
     <AuthLayout>
       <CardHeader>
@@ -29,7 +37,7 @@ export default function LoginPage() {
             </div>
             <Input id="password" type="password" required />
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full" onClick={handleLogin}>
             Login
           </Button>
         </div>
