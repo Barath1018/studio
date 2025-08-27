@@ -27,7 +27,7 @@ export default function LoginPage() {
     const auth = getAuth(app);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push(`/dashboard?email=${encodeURIComponent(email)}`);
+      router.push(`/dashboard`);
     } catch (error: any) {
       toast({
         title: 'Login Failed',

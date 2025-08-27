@@ -12,11 +12,10 @@ import {
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import { app } from '@/lib/firebase';
-
 
 import {
   Sidebar,
@@ -37,14 +36,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 export default function DashboardPage({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const email = searchParams.get('email');
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
+      if (user) {
+        setUser(user);
+      } else {
         router.push('/login');
       }
     });
@@ -59,8 +59,12 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
     return pathname.startsWith(path);
   };
 
-  const userEmail = email || 'user@example.com';
-  const userName = email ? email.split('@')[0] : 'User';
+  const userEmail = user?.email || '';
+  const userName = user?.displayName || user?.email?.split('@')[0] || 'User';
+
+  if (!user) {
+    return null; // or a loading spinner
+  }
 
   return (
     <SidebarProvider>
