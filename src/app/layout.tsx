@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'VisionBoard',
+  title: 'InsightEdge',
   description: 'Business Intelligence Dashboard',
 };
 

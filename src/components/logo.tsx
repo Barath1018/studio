@@ -1,10 +1,15 @@
-import { BarChartHorizontal } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 
 export function Logo() {
   return (
     <div className="flex items-center gap-2">
-      <BarChartHorizontal className="h-8 w-8 text-primary" />
-      <h1 className="text-2xl font-bold text-foreground">VisionBoard</h1>
+      <div className="bg-primary/20 text-primary p-2 rounded-md">
+        <DollarSign className="h-6 w-6" />
+      </div>
+      <div>
+        <h1 className="text-xl font-bold text-sidebar-foreground">InsightEdge</h1>
+        <p className="text-xs text-sidebar-foreground/70">Business Intelligence</p>
+      </div>
     </div>
   );
 }
