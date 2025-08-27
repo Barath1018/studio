@@ -12,39 +12,13 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Download, FileText } from 'lucide-react';
+import type { BusinessMetrics } from '@/ai/schemas/business-metrics';
 
-
-interface ReportsPageProps {
-  reports: {
-    name: string;
-    date: string;
-    type: string;
-    status: 'Final' | 'Draft';
-  }[];
-}
-
-export default function ReportsPage({ reports }: Partial<ReportsPageProps>) {
-  if (!reports || reports.length === 0) {
-    return (
-       <div className="flex flex-col gap-4">
-        <div className="flex-1">
-          <h1 className="text-2xl font-semibold">Reports</h1>
-          <p className="text-sm text-muted-foreground">
-            Download and view your generated business reports.
-          </p>
-        </div>
-        <Card>
-            <CardHeader>
-                <CardTitle>Generated Reports</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-muted-foreground">Upload a CSV on the dashboard page to see your reports.</p>
-            </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
+export default function ReportsPage({
+  reports,
+}: {
+  reports: BusinessMetrics['reports'];
+}) {
   return (
     <>
       <div className="flex-1">

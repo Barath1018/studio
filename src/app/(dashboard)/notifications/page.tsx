@@ -10,6 +10,7 @@ import {
   TableRow,
   TableHead,
 } from '@/components/ui/table';
+import type { BusinessMetrics } from '@/ai/schemas/business-metrics';
 
 const iconMap = {
     success: <CheckCircle className="h-5 w-5 text-green-500" />,
@@ -17,36 +18,11 @@ const iconMap = {
     info: <Bell className="h-5 w-5 text-blue-500" />,
 };
 
-interface NotificationsPageProps {
-  notifications: {
-    title: string;
-    description: string;
-    time: string;
-    type: 'success' | 'warning' | 'info';
-  }[];
-}
-
-export default function NotificationsPage({ notifications }: Partial<NotificationsPageProps>) {
-  if (!notifications || notifications.length === 0) {
-    return (
-       <div className="flex flex-col gap-4">
-        <div className="flex-1">
-          <h1 className="text-2xl font-semibold">Notifications</h1>
-          <p className="text-sm text-muted-foreground">
-            Stay updated with important events and alerts.
-          </p>
-        </div>
-        <Card>
-            <CardHeader>
-                <CardTitle>Recent Notifications</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-muted-foreground">Upload a CSV on the dashboard page to see your notifications.</p>
-            </CardContent>
-        </Card>
-      </div>
-    )
-  }
+export default function NotificationsPage({
+  notifications,
+}: {
+  notifications: BusinessMetrics['notifications'];
+}) {
   return (
     <>
       <div className="flex-1">
