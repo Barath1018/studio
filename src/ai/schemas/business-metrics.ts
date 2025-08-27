@@ -9,8 +9,8 @@ import { z } from 'zod';
 
 const KpiSchema = z.object({
   title: z.string().describe('The title of the Key Performance Indicator (e.g., "Total Revenue").'),
-  value: z.string().describe('The current value of the KPI (e.g., "$542,389").'),
-  change: z.string().describe('The change from the previous period (e.g., "+$5,230 vs last month").'),
+  value: z.string().describe('The current value of the KPI (e.g., "$542,389" or "1,423").'),
+  change: z.string().describe('The change from the previous period (e.g., "+$5,230 vs last month" or "+2.1%").'),
 });
 
 const ChartDataPointSchema = z.object({
