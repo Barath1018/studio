@@ -1,3 +1,4 @@
+
 import {
   Accordion,
   AccordionContent,
@@ -64,7 +65,7 @@ export default function HelpPage() {
                   supported platforms like Salesforce, Google Analytics, and
                   more.
                 </AccordionContent>
-              </AecordionItem>
+              </AccordionItem>
               <AccordionItem value="item-4">
                 <AccordionTrigger>
                   Who can I contact for technical support?

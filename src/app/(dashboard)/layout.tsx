@@ -1,3 +1,4 @@
+
 import type { ReactNode } from 'react';
 import DashboardPage from '@/components/dashboard/dashboard-page';
 
