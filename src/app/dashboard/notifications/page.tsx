@@ -47,14 +47,14 @@ export default function NotificationsPage() {
   ];
 
   return (
-    <>
-      <div className="flex-1">
+    <div className="space-y-6">
+      <div>
         <h1 className="text-2xl font-semibold">Notifications</h1>
         <p className="text-sm text-muted-foreground">
           Stay updated with important events and alerts.
         </p>
       </div>
-      <main className="flex flex-1 flex-col gap-4 pt-4 sm:px-6 sm:py-0 md:gap-8">
+      <div className="space-y-4">
         <Card>
           <CardHeader>
             <CardTitle>Recent Notifications</CardTitle>
@@ -95,7 +95,7 @@ export default function NotificationsPage() {
             )}
           </CardContent>
         </Card>
-      </main>
-    </>
+      </div>
+    </div>
   );
 }

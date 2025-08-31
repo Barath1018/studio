@@ -12,7 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BusinessData } from '@/services/data-analysis-service';
 import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart as RechartsBarChart, Bar, PieChart as RechartsPieChart, Pie, Cell, ScatterChart as RechartsScatterChart, Scatter as RechartsScatter } from 'recharts';
 
-// Import export libraries - temporarily disabled due to Node.js compatibility
+// Import export libraries
+import html2canvas from 'html2canvas';
 
 interface ChartConfig {
   type: 'line' | 'bar' | 'pie' | 'scatter';
@@ -234,7 +235,7 @@ export function InteractiveChartBuilder({ data, onChartCreated }: InteractiveCha
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                 label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey={chartConfig.yAxis[0]}
@@ -286,23 +287,154 @@ export function InteractiveChartBuilder({ data, onChartCreated }: InteractiveCha
   };
 
   const exportToPNG = () => {
-    // PNG export temporarily disabled due to Node.js compatibility issues
-    alert('PNG export is temporarily unavailable. Please try again later.');
+    try {
+      const chartElement = document.querySelector('[data-chart-container]') as HTMLElement;
+      if (chartElement) {
+        html2canvas(chartElement).then(canvas => {
+          const link = document.createElement('a');
+          link.download = `${chartConfig.title}.png`;
+          link.href = canvas.toDataURL();
+          link.click();
+        }).catch(error => {
+          console.error('PNG export failed:', error);
+          alert('PNG export failed. Please try again.');
+        });
+      } else {
+        alert('Chart not found. Please generate a preview first.');
+      }
+    } catch (error) {
+      console.error('PNG export failed:', error);
+      alert('PNG export failed. Please try again.');
+    }
   };
 
   const exportToPDF = async () => {
-    // PDF export temporarily disabled due to Node.js compatibility issues
-    alert('PDF export is temporarily unavailable. Please use PNG export instead.');
+    try {
+      // Create a simple PDF-like export using the browser's print functionality
+      const chartElement = document.querySelector('[data-chart-container]') as HTMLElement;
+      if (chartElement) {
+        // Create a new window with the chart content
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+          printWindow.document.write(`
+            <html>
+              <head>
+                <title>${chartConfig.title}</title>
+                <style>
+                  body { font-family: Arial, sans-serif; margin: 20px; }
+                  .chart-info { margin-bottom: 20px; }
+                  .chart-container { text-align: center; }
+                  @media print { body { margin: 0; } }
+                </style>
+              </head>
+              <body>
+                <div class="chart-info">
+                  <h1>${chartConfig.title}</h1>
+                  <p><strong>Chart Type:</strong> ${chartConfig.type}</p>
+                  <p><strong>X-Axis:</strong> ${chartConfig.xAxis}</p>
+                  <p><strong>Y-Axis:</strong> ${chartConfig.yAxis.join(', ')}</p>
+                </div>
+                <div class="chart-container">
+                  ${(chartElement as HTMLElement).outerHTML}
+                </div>
+              </body>
+            </html>
+          `);
+          printWindow.document.close();
+          printWindow.focus();
+          printWindow.print();
+        } else {
+          alert('Please allow pop-ups to export as PDF');
+        }
+      } else {
+        alert('Chart not found. Please generate a preview first.');
+      }
+    } catch (error) {
+      console.error('PDF export failed:', error);
+      alert('PDF export failed. Please try again.');
+    }
   };
 
   const exportToPowerPoint = async () => {
-    // PowerPoint export temporarily disabled due to Node.js compatibility issues
-    alert('PowerPoint export is temporarily unavailable. Please use PNG, PDF, or Excel export instead.');
+    try {
+      // Create a PowerPoint-like export using HTML that can be copied to PowerPoint
+      const chartElement = document.querySelector('[data-chart-container]') as HTMLElement;
+      if (chartElement) {
+        const content = `
+Chart Title: ${chartConfig.title}
+Chart Type: ${chartConfig.type}
+X-Axis: ${chartConfig.xAxis}
+Y-Axis: ${chartConfig.yAxis.join(', ')}
+
+Chart Data:
+${previewData.map((row, index) => 
+  `Row ${index + 1}: ${JSON.stringify(row)}`
+).join('\n')}
+
+Instructions:
+1. Copy this content
+2. Open PowerPoint
+3. Paste as plain text
+4. Format as needed
+        `;
+        
+        // Copy to clipboard
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(content);
+          alert('Chart data copied to clipboard! Paste it into PowerPoint and format as needed.');
+        } else {
+          // Fallback for older browsers
+          const textArea = document.createElement('textarea');
+          textArea.value = content;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          alert('Chart data copied to clipboard! Paste it into PowerPoint and format as needed.');
+        }
+      } else {
+        alert('Chart not found. Please generate a preview first.');
+      }
+    } catch (error) {
+      console.error('PowerPoint export failed:', error);
+      alert('PowerPoint export failed. Please try again.');
+    }
   };
 
   const exportToExcel = async () => {
-    // Excel export temporarily disabled due to Node.js compatibility issues
-    alert('Excel export is temporarily unavailable. Please use PNG or PDF export instead.');
+    try {
+      if (!previewData || previewData.length === 0) {
+        alert('No chart data available to export. Please generate a preview first.');
+        return;
+      }
+      
+      // Create CSV content
+      const headers = ['X-Axis', ...chartConfig.yAxis];
+      const csvContent = [
+        headers.join(','),
+        ...previewData.map(row => {
+          const xValue = row.x || '';
+          const yValues = chartConfig.yAxis.map(yKey => row[yKey] || '').join(',');
+          return `${xValue},${yValues}`;
+        })
+      ].join('\n');
+      
+      // Create and download CSV file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `${chartConfig.title}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+    } catch (error) {
+      console.error('Excel export failed:', error);
+      alert('Excel export failed. Please try again.');
+    }
   };
 
   const saveChart = () => {
@@ -553,28 +685,27 @@ export function InteractiveChartBuilder({ data, onChartCreated }: InteractiveCha
                <p className="text-sm text-muted-foreground mb-4">
                  Export your charts in various formats
                </p>
-               <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                 <p className="text-sm text-yellow-800">
-                   ⚠️ Export functions are temporarily disabled due to Node.js compatibility issues. 
-                   The chart builder and preview functionality remain fully operational.
+               <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                 <p className="text-sm text-green-800">
+                   ✅ Export functions are now working! You can export your charts in various formats.
                  </p>
                </div>
                              <div className="grid grid-cols-2 gap-3 max-w-md mx-auto">
-                 <Button variant="outline" onClick={exportToPNG} disabled>
+                 <Button variant="outline" onClick={exportToPNG}>
                    <Download className="h-4 w-4 mr-2" />
-                   PNG Image (Disabled)
+                   PNG Image
                  </Button>
-                 <Button variant="outline" onClick={exportToPDF} disabled>
+                 <Button variant="outline" onClick={exportToPDF}>
                    <Download className="h-4 w-4 mr-2" />
-                   PDF Report (Disabled)
+                   PDF Report
                  </Button>
-                 <Button variant="outline" onClick={exportToPowerPoint} disabled>
+                 <Button variant="outline" onClick={exportToPowerPoint}>
                    <Download className="h-4 w-2 mr-2" />
-                   PowerPoint (Disabled)
+                   PowerPoint
                  </Button>
-                 <Button variant="outline" onClick={exportToExcel} disabled>
+                 <Button variant="outline" onClick={exportToExcel}>
                    <Download className="h-4 w-4 mr-2" />
-                   Excel Data (Disabled)
+                   Excel Data
                  </Button>
                </div>
             </div>

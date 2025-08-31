@@ -9,7 +9,6 @@ import {
   TrendingUp,
   Users,
   Upload,
-  BarChart3,
   FileText,
   Database,
   Sparkles,
@@ -26,6 +25,7 @@ import { MonthlySalesPerformanceChart } from '@/components/dashboard/monthly-sal
 import { ProfitTrendAnalysisChart } from '@/components/dashboard/profit-trend-analysis-chart';
 import { DataInsights } from '@/components/dashboard/data-insights';
 import { InteractiveChartBuilder } from '@/components/dashboard/interactive-chart-builder';
+import { SavedChartRenderer } from '@/components/dashboard/saved-chart-renderer';
 import { AIQueryInterface } from '@/components/dashboard/ai-query-interface';
 import { AdvancedExportInterface } from '@/components/dashboard/advanced-export-interface';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -101,7 +101,7 @@ export default function Dashboard() {
           <p className="text-sm text-muted-foreground">Natural language queries and intelligent recommendations</p>
         </Card>
         <Card className="text-center p-4">
-          <BarChart3 className="h-8 w-8 text-green-600 mx-auto mb-2" />
+          <TrendingUp className="h-8 w-8 text-green-600 mx-auto mb-2" />
           <h4 className="font-medium">Interactive Charts</h4>
           <p className="text-sm text-muted-foreground">Build custom visualizations from your data</p>
         </Card>
@@ -313,7 +313,7 @@ export default function Dashboard() {
         {/* Analytics Tab */}
         <TabsContent value="analytics" className="space-y-6">
           <div className="text-center py-8">
-            <BarChart3 className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
+            <TrendingUp className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
             <h3 className="text-lg font-semibold mb-2">Advanced Analytics</h3>
             <p className="text-sm text-muted-foreground">
               Deep dive into your business data with advanced analytical tools
@@ -348,18 +348,11 @@ export default function Dashboard() {
                   <h3 className="text-lg font-semibold">Your Custom Charts</h3>
                   <div className="grid gap-4 md:grid-cols-2">
                     {customCharts.map((chart) => (
-                      <Card key={chart.id}>
-                        <CardHeader>
-                          <CardTitle className="text-sm">{chart.title}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="text-center py-8 text-muted-foreground">
-                            <BarChart3 className="h-8 w-8 mx-auto mb-2" />
-                            <p className="text-sm">Chart: {chart.type}</p>
-                            <p className="text-xs">X: {chart.xAxis} | Y: {chart.yAxis.join(', ')}</p>
-                          </div>
-                        </CardContent>
-                      </Card>
+                      <SavedChartRenderer 
+                        key={chart.id} 
+                        chart={chart} 
+                        data={businessData}
+                      />
                     ))}
                   </div>
                 </div>
@@ -367,7 +360,7 @@ export default function Dashboard() {
             </div>
           ) : (
             <div className="text-center py-8 text-muted-foreground">
-              <BarChart3 className="h-12 w-12 mx-auto mb-3" />
+              <Upload className="h-12 w-12 mx-auto mb-3" />
               <p>Upload data to create custom charts</p>
             </div>
           )}

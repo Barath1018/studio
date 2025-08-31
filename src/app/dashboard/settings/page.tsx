@@ -15,13 +15,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -112,24 +106,6 @@ export default function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-6">
-              <div className="flex items-center justify-between space-x-2">
-                <Label htmlFor="theme" className="flex flex-col space-y-1">
-                  <span>Theme</span>
-                  <span className="text-xs font-normal text-muted-foreground">
-                    Select your preferred color scheme.
-                  </span>
-                </Label>
-                <Select defaultValue="system">
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select theme" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
               <div className="flex items-center justify-between space-x-2">
                 <Label
                   htmlFor="email-notifications"

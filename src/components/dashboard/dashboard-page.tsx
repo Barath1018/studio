@@ -190,8 +190,8 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
             {children}
           </main>
         </div>
-      </SidebarInset>
-      </SidebarProvider>
-    </BusinessDataProvider>
-  );
+              </SidebarInset>
+        </SidebarProvider>
+      </BusinessDataProvider>
+    );
 }

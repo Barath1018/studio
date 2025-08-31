@@ -41,17 +41,15 @@ export function UserNav({ name, email }: UserNavProps) {
     }
   };
 
-  const fallback = name
-    .split(' ')
-    .map((n) => n[0])
-    .join('');
+  // Use first letter of email instead of name
+  const fallback = email.charAt(0).toUpperCase();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarFallback>
-              <User className="h-5 w-5" />
+            <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
+              {fallback}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -74,7 +72,7 @@ export function UserNav({ name, email }: UserNavProps) {
             <DropdownMenuItem>Settings</DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
+
         <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
