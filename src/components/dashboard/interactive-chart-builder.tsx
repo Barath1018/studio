@@ -551,7 +551,7 @@ export function InteractiveChartBuilder({ data, onChartCreated }: InteractiveCha
                       variant={chartConfig.type === type.value ? 'default' : 'outline'}
                       className={`h-auto p-4 flex-col gap-2 transition-all duration-300 ${
                         chartConfig.type === type.value 
-                          ? 'bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-600 text-white shadow-lg border-0 hover:from-blue-600 hover:via-purple-600 hover:to-indigo-700 transform hover:scale-105' 
+                          ? 'bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 text-white shadow-lg border-0 hover:from-green-600 hover:via-emerald-600 hover:to-teal-700 transform hover:scale-105' 
                           : 'hover:bg-gray-50'
                       }`}
                       onClick={() => handleChartTypeChange(type.value)}

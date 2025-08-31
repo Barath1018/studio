@@ -146,13 +146,21 @@ export function AdvancedExportInterface({ data, onExportComplete }: AdvancedExpo
                   <Button
                     key={format.value}
                     variant={exportOptions.format === format.value ? 'default' : 'outline'}
-                    className="h-auto p-4 flex-col gap-2"
+                    className={`h-auto p-4 flex-col gap-2 transition-all duration-300 ${
+                      exportOptions.format === format.value 
+                        ? 'bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 text-white shadow-lg border-0 hover:from-green-600 hover:via-emerald-600 hover:to-teal-700 transform hover:scale-105' 
+                        : 'hover:bg-gray-50'
+                    }`}
                     onClick={() => handleFormatChange(format.value)}
                   >
                     <span className="text-2xl">{format.icon}</span>
                     <div className="text-center">
                       <div className="font-medium">{format.label}</div>
-                      <div className="text-xs text-muted-foreground">{format.description}</div>
+                      <div className={`text-xs ${
+                        exportOptions.format === format.value 
+                          ? 'text-white/80' 
+                          : 'text-muted-foreground'
+                      }`}>{format.description}</div>
                     </div>
                   </Button>
                 ))}
