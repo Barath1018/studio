@@ -45,11 +45,10 @@ import { DataAnalysisService, BusinessData, AnalyzedMetrics } from '@/services/d
 import { useBusinessData } from '@/contexts/business-data-context';
 
 const iconMap: { [key: string]: React.ReactNode } = {
-  'Total Revenue': <DollarSign className="h-6 w-6 text-muted-foreground" />,
-  'Total Expenses': <CreditCard className="h-6 w-6 text-muted-foreground" />,
-  'Net Profit': <TrendingUp className="h-6 w-6 text-muted-foreground" />,
-  'Avg. Order Value': <Tag className="h-6 w-6 text-muted-foreground" />,
-  'Active Customers': <Users className="h-6 w-6 text-muted-foreground" />,
+  'Total Revenue': <DollarSign className="h-5 w-5" />,
+  'Total Expenses': <CreditCard className="h-5 w-5" />,
+  'Net Profit': <TrendingUp className="h-5 w-5" />,
+  'Avg. Order Value': <Tag className="h-5 w-5" />,
 };
 
 export default function Dashboard() {

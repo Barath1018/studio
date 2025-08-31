@@ -54,23 +54,52 @@ export function EnhancedKPICard({
     }
   };
 
+  const getCardBackground = () => {
+    switch (title) {
+      case 'Total Revenue':
+        return 'bg-green-50';
+      case 'Total Expenses':
+        return 'bg-red-50';
+      case 'Net Profit':
+        return 'bg-blue-50';
+      case 'Avg. Order Value':
+        return 'bg-amber-50';
+      default:
+        return '';
+    }
+  };
+
+  const getIconBackground = () => {
+    switch (title) {
+      case 'Total Revenue':
+        return 'bg-green-100 text-green-600';
+      case 'Total Expenses':
+        return 'bg-red-100 text-red-600';
+      case 'Net Profit':
+        return 'bg-blue-100 text-blue-600';
+      case 'Avg. Order Value':
+        return 'bg-amber-100 text-amber-600';
+      default:
+        return 'bg-gray-100 text-gray-600';
+    }
+  };
+
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className={`hover:shadow-md transition-shadow ${getCardBackground()}`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}
         </CardTitle>
-        <div className="flex items-center gap-2">
+        <div className={`p-2 rounded-full ${getIconBackground()}`}>
           {icon}
-          {getTrendIcon()}
         </div>
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
         <div className="flex items-center justify-between mt-2">
-          <Badge variant={getChangeBadgeVariant()} className="text-xs">
+          <div className={`text-xs ${getTrendColor()}`}>
             {change}
-          </Badge>
+          </div>
           {previousValue && (
             <div className="text-xs text-muted-foreground">
               Prev: {typeof previousValue === 'number' ? 

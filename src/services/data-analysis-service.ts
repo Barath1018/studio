@@ -224,22 +224,7 @@ export class DataAnalysisService {
       });
     }
     
-    // Active Customers
-    if (customerColumns.length > 0) {
-      const uniqueCustomers = new Set(data.map(row => 
-        customerColumns.map(col => row[col]).join('|')
-      )).size;
-      const previousCustomers = Math.floor(uniqueCustomers * 0.96);
-      const change = ((uniqueCustomers - previousCustomers) / previousCustomers * 100).toFixed(1);
-      
-      kpis.push({
-        title: 'Active Customers',
-        value: uniqueCustomers.toLocaleString(),
-        change: `${change}% vs previous period`,
-        trend: change > 0 ? 'up' : change < 0 ? 'down' : 'stable',
-        previousValue: previousCustomers
-      });
-    }
+    // Active Customers card removed as requested
     
     return kpis;
   }
