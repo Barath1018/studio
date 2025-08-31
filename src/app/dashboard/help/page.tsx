@@ -1,4 +1,6 @@
+'use client';
 
+import { useState } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -9,8 +11,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
+import ContactForm from '@/components/contact-form';
 
 export default function HelpPage() {
+  const [showContactForm, setShowContactForm] = useState(false);
+
   return (
     <>
       <div className="flex-1">
@@ -87,10 +92,19 @@ export default function HelpPage() {
             <p className="text-muted-foreground">
               Still have questions? Our support team is here to help.
             </p>
-            <Button className="mt-4">Contact Us</Button>
+            <Button 
+              className="mt-4" 
+              onClick={() => setShowContactForm(true)}
+            >
+              Contact Us
+            </Button>
           </CardContent>
         </Card>
       </main>
+      
+      {showContactForm && (
+        <ContactForm onClose={() => setShowContactForm(false)} />
+      )}
     </>
   );
 }

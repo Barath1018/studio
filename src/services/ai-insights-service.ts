@@ -486,28 +486,211 @@ export class AIInsightsService {
     return 'stable';
   }
 
-  // Placeholder methods for specific insight types
+  // Specific insight generation methods
   private static async generateRevenueInsights(data: any[]): Promise<AIInsight[]> {
-    return [];
+    const insights: AIInsight[] = [];
+    const revenueFields = this.getRevenueFields(data);
+    
+    if (revenueFields.length > 0) {
+      const field = revenueFields[0];
+      const values = data.map(row => Number(row[field])).filter(val => !isNaN(val));
+      
+      if (values.length > 5) {
+        const trend = this.analyzeTrend(data, field);
+        const currentValue = values[values.length - 1];
+        const avgValue = values.reduce((sum, val) => sum + val, 0) / values.length;
+        
+        insights.push({
+          type: 'trend',
+          title: `Revenue Trend Analysis`,
+          description: `${field} is currently ${trend}. Current value: ${currentValue.toFixed(2)}, Average: ${avgValue.toFixed(2)}`,
+          confidence: 85,
+          impact: trend === 'decreasing' ? 'high' : trend === 'increasing' ? 'medium' : 'low',
+          category: 'revenue',
+          data: data.slice(-10),
+          visualization: 'chart',
+          actionable: true,
+          actionItems: [
+            'Monitor revenue trends closely',
+            'Analyze factors affecting revenue performance',
+            'Consider revenue optimization strategies'
+          ]
+        });
+      }
+    }
+    
+    return insights;
   }
 
   private static async generateCostInsights(data: any[]): Promise<AIInsight[]> {
-    return [];
+    const insights: AIInsight[] = [];
+    const costFields = this.getCostFields(data);
+    
+    if (costFields.length > 0) {
+      const field = costFields[0];
+      const values = data.map(row => Number(row[field])).filter(val => !isNaN(val));
+      
+      if (values.length > 5) {
+        const trend = this.analyzeTrend(data, field);
+        const currentValue = values[values.length - 1];
+        const avgValue = values.reduce((sum, val) => sum + val, 0) / values.length;
+        
+        insights.push({
+          type: 'trend',
+          title: `Cost Analysis`,
+          description: `${field} is currently ${trend}. Current value: ${currentValue.toFixed(2)}, Average: ${avgValue.toFixed(2)}`,
+          confidence: 82,
+          impact: trend === 'increasing' ? 'high' : 'medium',
+          category: 'costs',
+          data: data.slice(-10),
+          visualization: 'chart',
+          actionable: true,
+          actionItems: [
+            'Review cost structure and identify optimization opportunities',
+            'Implement cost control measures where necessary',
+            'Monitor cost trends and their impact on profitability'
+          ]
+        });
+      }
+    }
+    
+    return insights;
   }
 
   private static async generateCustomerInsights(data: any[]): Promise<AIInsight[]> {
-    return [];
+    const insights: AIInsight[] = [];
+    const customerFields = this.getNumericFields(data).filter(field => 
+      field.toLowerCase().includes('customer') || 
+      field.toLowerCase().includes('user') || 
+      field.toLowerCase().includes('client')
+    );
+    
+    if (customerFields.length > 0) {
+      const field = customerFields[0];
+      const values = data.map(row => Number(row[field])).filter(val => !isNaN(val));
+      
+      if (values.length > 3) {
+        const totalCustomers = values.reduce((sum, val) => sum + val, 0);
+        const avgCustomers = totalCustomers / values.length;
+        
+        insights.push({
+          type: 'trend',
+          title: `Customer Analysis`,
+          description: `Analyzing ${field}: Total customers: ${totalCustomers.toFixed(0)}, Average: ${avgCustomers.toFixed(1)}`,
+          confidence: 78,
+          impact: 'medium',
+          category: 'customers',
+          data: data.slice(-10),
+          visualization: 'chart',
+          actionable: true,
+          actionItems: [
+            'Analyze customer acquisition and retention patterns',
+            'Identify high-value customer segments',
+            'Develop customer-focused strategies'
+          ]
+        });
+      }
+    }
+    
+    return insights;
   }
 
   private static async generateTrendInsights(data: any[]): Promise<AIInsight[]> {
-    return [];
+    const insights: AIInsight[] = [];
+    const numericFields = this.getNumericFields(data);
+    
+    for (const field of numericFields.slice(0, 3)) { // Analyze top 3 fields
+      const values = data.map(row => Number(row[field])).filter(val => !isNaN(val));
+      
+      if (values.length > 3) {
+        const trend = this.analyzeTrend(data, field);
+        const recentChange = values.length > 1 ? 
+          ((values[values.length - 1] - values[values.length - 2]) / values[values.length - 2] * 100) : 0;
+        
+        insights.push({
+          type: 'trend',
+          title: `${field} Trend`,
+          description: `${field} is showing a ${trend} trend with ${recentChange.toFixed(1)}% recent change`,
+          confidence: 75,
+          impact: Math.abs(recentChange) > 10 ? 'high' : Math.abs(recentChange) > 5 ? 'medium' : 'low',
+          category: this.categorizeField(field),
+          data: data.slice(-10),
+          visualization: 'chart',
+          actionable: true,
+          actionItems: [
+            `Monitor ${field} trends closely`,
+            'Investigate factors driving the trend',
+            'Plan appropriate response strategies'
+          ]
+        });
+      }
+    }
+    
+    return insights;
   }
 
   private static async generatePerformanceInsights(data: any[]): Promise<AIInsight[]> {
-    return [];
+    const insights: AIInsight[] = [];
+    const numericFields = this.getNumericFields(data);
+    
+    if (numericFields.length > 0) {
+      // Calculate overall performance metrics
+      const performanceData = numericFields.map(field => {
+        const values = data.map(row => Number(row[field])).filter(val => !isNaN(val));
+        const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
+        const variance = values.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / values.length;
+        return { field, avg, variance, stability: variance < avg * 0.1 ? 'stable' : 'volatile' };
+      });
+      
+      const stableMetrics = performanceData.filter(p => p.stability === 'stable');
+      const volatileMetrics = performanceData.filter(p => p.stability === 'volatile');
+      
+      insights.push({
+        type: 'recommendation',
+        title: 'Performance Overview',
+        description: `Found ${stableMetrics.length} stable metrics and ${volatileMetrics.length} volatile metrics in your data`,
+        confidence: 85,
+        impact: volatileMetrics.length > stableMetrics.length ? 'high' : 'medium',
+        category: 'operations',
+        data: data.slice(-10),
+        visualization: 'metric',
+        actionable: true,
+        actionItems: [
+          'Focus on stabilizing volatile metrics',
+          'Leverage stable metrics for consistent growth',
+          'Implement performance monitoring systems'
+        ]
+      });
+    }
+    
+    return insights;
   }
 
   private static async generateGeneralInsights(data: any[]): Promise<AIInsight[]> {
-    return [];
+    const insights: AIInsight[] = [];
+    
+    // General data quality and structure insights
+    const numericFields = this.getNumericFields(data);
+    const totalFields = Object.keys(data[0] || {}).length;
+    const dataQuality = numericFields.length / totalFields;
+    
+    insights.push({
+      type: 'recommendation',
+      title: 'Data Quality Assessment',
+      description: `Your dataset contains ${data.length} records with ${totalFields} fields. ${(dataQuality * 100).toFixed(0)}% of fields contain numeric data suitable for analysis.`,
+      confidence: 95,
+      impact: dataQuality > 0.5 ? 'low' : 'medium',
+      category: 'operations',
+      data: data.slice(0, 5),
+      visualization: 'table',
+      actionable: true,
+      actionItems: [
+        'Ensure data consistency across all records',
+        'Consider adding more quantitative metrics for deeper analysis',
+        'Regular data quality audits recommended'
+      ]
+    });
+    
+    return insights;
   }
 }

@@ -31,6 +31,7 @@ export function AIQueryInterface({ data }: AIQueryInterfaceProps) {
   const [queryHistory, setQueryHistory] = useState<NaturalLanguageQuery[]>([]);
   const [anomalies, setAnomalies] = useState<AnomalyDetection[]>([]);
   const [forecasts, setForecasts] = useState<ForecastData[]>([]);
+  const [allInsights, setAllInsights] = useState<AIInsight[]>([]);
   const [activeTab, setActiveTab] = useState<'query' | 'insights' | 'anomalies' | 'forecasts'>('query');
 
   const handleQuery = async () => {
@@ -41,6 +42,15 @@ export function AIQueryInterface({ data }: AIQueryInterfaceProps) {
     try {
       const result = await AIInsightsService.processNaturalLanguageQuery(query, data.data);
       setQueryHistory(prev => [result, ...prev]);
+      
+      // Add all insights from the query result to the insights collection
+      setAllInsights(prev => {
+        const newInsights = result.response.filter(insight => 
+          !prev.some(existing => existing.title === insight.title && existing.description === insight.description)
+        );
+        return [...newInsights, ...prev];
+      });
+      
       setQuery('');
     } catch (error) {
       console.error('Query failed:', error);
@@ -323,10 +333,59 @@ export function AIQueryInterface({ data }: AIQueryInterfaceProps) {
 
             {/* AI Insights */}
             {activeTab === 'insights' && (
-              <div className="text-center py-8 text-muted-foreground">
-                <Lightbulb className="h-12 w-12 mx-auto mb-3" />
-                <p>AI insights will appear here after running queries</p>
-              </div>
+              <ScrollArea className="h-96">
+                <div className="space-y-4">
+                  {allInsights.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Lightbulb className="h-12 w-12 mx-auto mb-3" />
+                      <p>AI insights will appear here after running queries</p>
+                      <p className="text-sm mt-2">Try asking questions about your data above</p>
+                    </div>
+                  ) : (
+                    allInsights.map((insight, index) => (
+                      <div key={index} className="border rounded-lg p-4 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            {getInsightIcon(insight.type)}
+                            <h5 className="font-medium">{insight.title}</h5>
+                            <Badge className={getImpactColor(insight.impact)}>
+                              {insight.impact} Impact
+                            </Badge>
+                            <Badge variant="outline">
+                              {insight.confidence.toFixed(0)}% Confidence
+                            </Badge>
+                          </div>
+                          <Button variant="outline" size="sm">
+                            <Download className="h-4 w-4 mr-2" />
+                            Export
+                          </Button>
+                        </div>
+                        
+                        <p className="text-sm text-gray-600">{insight.description}</p>
+                        
+                        {insight.actionItems && insight.actionItems.length > 0 && (
+                          <div className="space-y-1">
+                            <p className="text-xs font-medium text-gray-700">Action Items:</p>
+                            <ul className="text-xs text-gray-600 space-y-1">
+                              {insight.actionItems.map((item, itemIndex) => (
+                                <li key={itemIndex} className="flex items-start gap-2">
+                                  <span className="text-blue-600">•</span>
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        
+                        <div className="flex justify-between items-center text-xs text-muted-foreground">
+                          <span>Category: {insight.category}</span>
+                          <span>Type: {insight.type}</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </ScrollArea>
             )}
 
             {/* Anomalies */}

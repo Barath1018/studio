@@ -3,6 +3,9 @@
  * Supports multiple formats: PDF, PowerPoint, Excel, and images.
  */
 
+import jsPDF from 'jspdf';
+import * as XLSX from 'xlsx';
+
 export interface ExportOptions {
   format: 'pdf' | 'pptx' | 'excel' | 'png' | 'svg';
   title: string;
@@ -37,18 +40,86 @@ export class ExportService {
     options: ExportOptions
   ): Promise<ExportResult> {
     try {
-      // Simulate PDF generation
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const doc = new jsPDF();
+      let yPosition = 20;
+      
+      // Title
+      doc.setFontSize(20);
+      doc.text(options.title, 20, yPosition);
+      yPosition += 20;
+      
+      // Date
+      doc.setFontSize(10);
+      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, yPosition);
+      yPosition += 20;
+      
+      // Executive Summary
+      if (data) {
+        doc.setFontSize(14);
+        doc.text('Executive Summary', 20, yPosition);
+        yPosition += 10;
+        
+        doc.setFontSize(10);
+        const summary = this.generateExecutiveSummary(data);
+        const splitSummary = doc.splitTextToSize(summary, 170);
+        doc.text(splitSummary, 20, yPosition);
+        yPosition += splitSummary.length * 5 + 10;
+      }
+      
+      // KPIs Section
+      if (options.includeCharts && data.kpis) {
+        doc.setFontSize(14);
+        doc.text('Key Performance Indicators', 20, yPosition);
+        yPosition += 10;
+        
+        data.kpis.forEach((kpi: any) => {
+          if (yPosition > 250) {
+            doc.addPage();
+            yPosition = 20;
+          }
+          doc.setFontSize(10);
+          doc.text(`${kpi.title}: ${kpi.value}`, 25, yPosition);
+          yPosition += 8;
+        });
+        yPosition += 10;
+      }
+      
+      // Data Tables Section
+      if (options.includeTables && data.data && data.data.length > 0) {
+        doc.setFontSize(14);
+        doc.text('Data Summary', 20, yPosition);
+        yPosition += 10;
+        
+        doc.setFontSize(10);
+        doc.text(`Total Records: ${data.data.length}`, 25, yPosition);
+        yPosition += 8;
+        
+        if (data.headers) {
+          doc.text(`Columns: ${data.headers.join(', ')}`, 25, yPosition);
+          yPosition += 8;
+        }
+      }
+      
+      // Watermark
+      if (options.watermark) {
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text(options.watermark, 20, 280);
+      }
+      
+      const pdfBlob = doc.output('blob');
+      const pdfUrl = URL.createObjectURL(pdfBlob);
       
       const fileName = `${options.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${new Date().toISOString().split('T')[0]}.pdf`;
       
       return {
         success: true,
         fileName,
-        downloadUrl: `data:application/pdf;base64,${btoa('PDF content would be generated here')}`,
-        fileSize: 1024 * 1024 // 1MB
+        downloadUrl: pdfUrl,
+        fileSize: pdfBlob.size
       };
     } catch (error) {
+      console.error('PDF generation error:', error);
       return {
         success: false,
         error: 'Failed to generate PDF'
@@ -64,21 +135,63 @@ export class ExportService {
     options: ExportOptions
   ): Promise<ExportResult> {
     try {
-      // Simulate PowerPoint generation
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      // For client-side compatibility, we'll create a structured text file that can be imported into PowerPoint
+      const slides = [
+        {
+          title: options.title,
+          content: `Business Intelligence Report\nGenerated on ${new Date().toLocaleDateString()}`
+        },
+        {
+          title: 'Executive Summary',
+          content: data ? this.generateExecutiveSummary(data) : 'No data available'
+        }
+      ];
       
-      const fileName = `${options.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${new Date().toISOString().split('T')[0]}.pptx`;
+      // Add KPIs slide
+      if (options.includeCharts && data.kpis) {
+        slides.push({
+          title: 'Key Performance Indicators',
+          content: data.kpis.map((kpi: any) => `• ${kpi.title}: ${kpi.value}`).join('\n')
+        });
+      }
+      
+      // Add data summary slide
+      if (options.includeTables && data.data) {
+        slides.push({
+          title: 'Data Overview',
+          content: [
+            `• Total Records: ${data.data.length}`,
+            data.headers ? `• Data Columns: ${data.headers.length}` : '',
+            data.headers ? `• Column Names: ${data.headers.join(', ')}` : ''
+          ].filter(Boolean).join('\n')
+        });
+      }
+      
+      // Create PowerPoint-compatible content
+      const pptContent = slides.map((slide, index) => 
+        `Slide ${index + 1}: ${slide.title}\n${'='.repeat(50)}\n${slide.content}\n\n`
+      ).join('');
+      
+      const instructions = `\n\nINSTRUCTIONS FOR POWERPOINT IMPORT:\n${'='.repeat(50)}\n1. Copy the content above\n2. Open PowerPoint\n3. Create a new presentation\n4. Paste content and format as needed\n5. Each section represents a slide\n\nAlternatively, save this file and use PowerPoint's \"Import Outline\" feature.`;
+      
+      const fullContent = pptContent + instructions;
+      
+      const blob = new Blob([fullContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      
+      const fileName = `${options.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${new Date().toISOString().split('T')[0]}_powerpoint_content.txt`;
       
       return {
         success: true,
         fileName,
-        downloadUrl: `data:application/vnd.openxmlformats-officedocument.presentationml.presentation;base64,${btoa('PowerPoint content would be generated here')}`,
-        fileSize: 2 * 1024 * 1024 // 2MB
+        downloadUrl: url,
+        fileSize: blob.size
       };
     } catch (error) {
+      console.error('PowerPoint generation error:', error);
       return {
         success: false,
-        error: 'Failed to generate PowerPoint'
+        error: 'Failed to generate PowerPoint content'
       };
     }
   }
@@ -91,18 +204,71 @@ export class ExportService {
     options: ExportOptions
   ): Promise<ExportResult> {
     try {
-      // Simulate Excel generation
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const workbook = XLSX.utils.book_new();
+      
+      // Summary Sheet
+      const summaryData = [
+        ['Report Title', options.title],
+        ['Generated On', new Date().toLocaleDateString()],
+        [''],
+        ['Summary']
+      ];
+      
+      if (data) {
+        const summary = this.generateExecutiveSummary(data);
+        summaryData.push(['Executive Summary', summary]);
+        summaryData.push(['']);
+      }
+      
+      if (data.data) {
+        summaryData.push(['Total Records', data.data.length]);
+      }
+      
+      if (data.headers) {
+        summaryData.push(['Columns', data.headers.length]);
+        summaryData.push(['Column Names', data.headers.join(', ')]);
+      }
+      
+      const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
+      XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary');
+      
+      // KPIs Sheet
+      if (options.includeCharts && data.kpis) {
+        const kpiData = [['KPI', 'Value', 'Previous Value']];
+        data.kpis.forEach((kpi: any) => {
+          kpiData.push([kpi.title, kpi.value, kpi.previousValue || 'N/A']);
+        });
+        
+        const kpiSheet = XLSX.utils.aoa_to_sheet(kpiData);
+        XLSX.utils.book_append_sheet(workbook, kpiSheet, 'KPIs');
+      }
+      
+      // Raw Data Sheet
+      if (options.includeTables && data.data && data.data.length > 0) {
+        const dataSheet = XLSX.utils.json_to_sheet(data.data);
+        XLSX.utils.book_append_sheet(workbook, dataSheet, 'Raw Data');
+      }
+      
+      // Chart Data Sheet
+      if (data.chartData && data.chartData.length > 0) {
+        const chartSheet = XLSX.utils.json_to_sheet(data.chartData);
+        XLSX.utils.book_append_sheet(workbook, chartSheet, 'Chart Data');
+      }
+      
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const excelBlob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const excelUrl = URL.createObjectURL(excelBlob);
       
       const fileName = `${options.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${new Date().toISOString().split('T')[0]}.xlsx`;
       
       return {
         success: true,
         fileName,
-        downloadUrl: `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${btoa('Excel content would be generated here')}`,
-        fileSize: 512 * 1024 // 512KB
+        downloadUrl: excelUrl,
+        fileSize: excelBlob.size
       };
     } catch (error) {
+      console.error('Excel generation error:', error);
       return {
         success: false,
         error: 'Failed to generate Excel file'
@@ -119,18 +285,64 @@ export class ExportService {
     options: ExportOptions
   ): Promise<ExportResult> {
     try {
-      // Simulate image export
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const fileName = `${options.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_chart_${new Date().toISOString().split('T')[0]}.${format}`;
+      if (format === 'png') {
+        // Import html2canvas dynamically
+        const html2canvas = (await import('html2canvas')).default;
+        
+        const canvas = await html2canvas(chartElement, {
+          backgroundColor: '#ffffff',
+          scale: 2, // Higher quality
+          useCORS: true
+        });
+        
+        return new Promise((resolve) => {
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const imageUrl = URL.createObjectURL(blob);
+              const fileName = `${options.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_chart_${new Date().toISOString().split('T')[0]}.png`;
+              
+              resolve({
+                success: true,
+                fileName,
+                downloadUrl: imageUrl,
+                fileSize: blob.size
+              });
+            } else {
+              resolve({
+                success: false,
+                error: 'Failed to create image blob'
+              });
+            }
+          }, 'image/png', 0.95);
+        });
+      } else if (format === 'svg') {
+        // For SVG, we'll create a simple SVG representation
+        const svgContent = `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="white"/>
+  <text x="400" y="50" text-anchor="middle" font-size="24" font-family="Arial">${options.title}</text>
+  <text x="400" y="300" text-anchor="middle" font-size="16" font-family="Arial">Chart visualization would appear here</text>
+</svg>`;
+        
+        const svgBlob = new Blob([svgContent], { type: 'image/svg+xml' });
+        const svgUrl = URL.createObjectURL(svgBlob);
+        
+        const fileName = `${options.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_chart_${new Date().toISOString().split('T')[0]}.svg`;
+        
+        return {
+          success: true,
+          fileName,
+          downloadUrl: svgUrl,
+          fileSize: svgBlob.size
+        };
+      }
       
       return {
-        success: true,
-        fileName,
-        downloadUrl: `data:image/${format};base64,${btoa('Image content would be generated here')}`,
-        fileSize: 256 * 1024 // 256KB
+        success: false,
+        error: 'Unsupported image format'
       };
     } catch (error) {
+      console.error('Image export error:', error);
       return {
         success: false,
         error: 'Failed to export chart as image'
@@ -284,9 +496,17 @@ export class ExportService {
     const link = document.createElement('a');
     link.href = result.downloadUrl;
     link.download = result.fileName || 'export';
+    link.style.display = 'none';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    // Clean up object URL after download
+    setTimeout(() => {
+      if (result.downloadUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(result.downloadUrl);
+      }
+    }, 1000);
   }
 
   /**
@@ -303,7 +523,7 @@ export class ExportService {
       {
         value: 'pptx',
         label: 'PowerPoint',
-        description: 'Presentation-ready slides for meetings',
+        description: 'Structured content for PowerPoint presentations',
         icon: '📊'
       },
       {

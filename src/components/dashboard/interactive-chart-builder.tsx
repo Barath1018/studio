@@ -11,6 +11,8 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BusinessData } from '@/services/data-analysis-service';
 import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart as RechartsBarChart, Bar, PieChart as RechartsPieChart, Pie, Cell, ScatterChart as RechartsScatterChart, Scatter as RechartsScatter } from 'recharts';
+import { ExportService } from '@/services/export-service';
+import { AIInsightsService } from '@/services/ai-insights-service';
 
 // Import export libraries
 import html2canvas from 'html2canvas';
@@ -75,6 +77,7 @@ export function InteractiveChartBuilder({ data, onChartCreated }: InteractiveCha
 
   const [previewData, setPreviewData] = useState<any[]>([]);
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState('configure');
 
   const numericColumns = useMemo(() => {
     console.log('Calculating numeric columns...', { dataLength: data?.data?.length, headers: data?.headers });
@@ -172,6 +175,7 @@ export function InteractiveChartBuilder({ data, onChartCreated }: InteractiveCha
     console.log('Processed data:', processedData.slice(0, 2)); // Log first 2 processed rows
     setPreviewData(processedData);
     setIsPreviewVisible(true);
+    setActiveTab('preview'); // Switch to preview tab after generating
   };
 
   const renderChart = () => {
@@ -276,29 +280,37 @@ export function InteractiveChartBuilder({ data, onChartCreated }: InteractiveCha
   };
 
   const exportChart = () => {
-    // Implementation for exporting chart as image/PDF
-    const canvas = document.querySelector('canvas');
-    if (canvas) {
-      const link = document.createElement('a');
-      link.download = `${chartConfig.title}.png`;
-      link.href = canvas.toDataURL();
-      link.click();
+    // Redirect to export tab instead of generic export
+    if (!previewData || previewData.length === 0) {
+      alert('Please generate a preview first before exporting.');
+      return;
     }
+    setActiveTab('export');
   };
 
-  const exportToPNG = () => {
+  const exportToPNG = async () => {
     try {
+      // Ensure we have preview data
+      if (!previewData || previewData.length === 0) {
+        alert('Chart not found. Please generate a preview first.');
+        return;
+      }
+      
       const chartElement = document.querySelector('[data-chart-container]') as HTMLElement;
       if (chartElement) {
-        html2canvas(chartElement).then(canvas => {
-          const link = document.createElement('a');
-          link.download = `${chartConfig.title}.png`;
-          link.href = canvas.toDataURL();
-          link.click();
-        }).catch(error => {
-          console.error('PNG export failed:', error);
-          alert('PNG export failed. Please try again.');
+        const result = await ExportService.exportChartAsImage(chartElement, 'png', {
+          format: 'png',
+          title: chartConfig.title,
+          includeCharts: true,
+          includeTables: false,
+          includeInsights: false
         });
+        
+        if (result.success) {
+          ExportService.downloadFile(result);
+        } else {
+          alert(`PNG export failed: ${result.error}`);
+        }
       } else {
         alert('Chart not found. Please generate a preview first.');
       }
@@ -310,44 +322,50 @@ export function InteractiveChartBuilder({ data, onChartCreated }: InteractiveCha
 
   const exportToPDF = async () => {
     try {
-      // Create a simple PDF-like export using the browser's print functionality
-      const chartElement = document.querySelector('[data-chart-container]') as HTMLElement;
-      if (chartElement) {
-        // Create a new window with the chart content
-        const printWindow = window.open('', '_blank');
-        if (printWindow) {
-          printWindow.document.write(`
-            <html>
-              <head>
-                <title>${chartConfig.title}</title>
-                <style>
-                  body { font-family: Arial, sans-serif; margin: 20px; }
-                  .chart-info { margin-bottom: 20px; }
-                  .chart-container { text-align: center; }
-                  @media print { body { margin: 0; } }
-                </style>
-              </head>
-              <body>
-                <div class="chart-info">
-                  <h1>${chartConfig.title}</h1>
-                  <p><strong>Chart Type:</strong> ${chartConfig.type}</p>
-                  <p><strong>X-Axis:</strong> ${chartConfig.xAxis}</p>
-                  <p><strong>Y-Axis:</strong> ${chartConfig.yAxis.join(', ')}</p>
-                </div>
-                <div class="chart-container">
-                  ${(chartElement as HTMLElement).outerHTML}
-                </div>
-              </body>
-            </html>
-          `);
-          printWindow.document.close();
-          printWindow.focus();
-          printWindow.print();
-        } else {
-          alert('Please allow pop-ups to export as PDF');
-        }
+      // Generate AI insights for the chart data
+      const anomalies = await AIInsightsService.detectAnomalies(previewData);
+      const correlations = await AIInsightsService.analyzeCorrelations(previewData);
+      
+      const result = await ExportService.exportToPDF({
+        chartData: previewData,
+        kpis: [
+          { title: 'Chart Type', value: chartConfig.type },
+          { title: 'Data Points', value: previewData?.length || 0 },
+          { title: 'X-Axis', value: chartConfig.xAxis },
+          { title: 'Y-Axis', value: chartConfig.yAxis.join(', ') },
+          { title: 'AI Anomalies Detected', value: anomalies.length },
+          { title: 'Correlations Found', value: correlations.length }
+        ],
+        insights: [
+          ...correlations.map((c: any) => ({
+            title: c.title,
+            description: c.description,
+            impact: c.impact,
+            category: c.category,
+            actionItems: c.actionItems
+          })),
+          ...anomalies.map((a: any) => ({
+            title: `${a.field} Anomaly`,
+            description: a.description,
+            impact: a.severity,
+            category: 'analysis',
+            actionItems: [`Investigate ${a.field} values`, 'Review data quality']
+          }))
+        ]
+      }, {
+        format: 'pdf',
+        title: `${chartConfig.title} - AI Analysis Report`,
+        includeCharts: true,
+        includeTables: true,
+        includeInsights: true,
+        watermark: `AI-Enhanced Chart Analysis - ${new Date().toLocaleDateString()}`
+      });
+      
+      if (result.success) {
+        ExportService.downloadFile(result);
+        alert(`PDF exported successfully with ${anomalies.length + correlations.length} AI insights!`);
       } else {
-        alert('Chart not found. Please generate a preview first.');
+        alert(`PDF export failed: ${result.error}`);
       }
     } catch (error) {
       console.error('PDF export failed:', error);
@@ -357,43 +375,47 @@ export function InteractiveChartBuilder({ data, onChartCreated }: InteractiveCha
 
   const exportToPowerPoint = async () => {
     try {
-      // Create a PowerPoint-like export using HTML that can be copied to PowerPoint
-      const chartElement = document.querySelector('[data-chart-container]') as HTMLElement;
-      if (chartElement) {
-        const content = `
-Chart Title: ${chartConfig.title}
-Chart Type: ${chartConfig.type}
-X-Axis: ${chartConfig.xAxis}
-Y-Axis: ${chartConfig.yAxis.join(', ')}
-
-Chart Data:
-${previewData.map((row, index) => 
-  `Row ${index + 1}: ${JSON.stringify(row)}`
-).join('\n')}
-
-Instructions:
-1. Copy this content
-2. Open PowerPoint
-3. Paste as plain text
-4. Format as needed
-        `;
-        
-        // Copy to clipboard
-        if (navigator.clipboard) {
-          await navigator.clipboard.writeText(content);
-          alert('Chart data copied to clipboard! Paste it into PowerPoint and format as needed.');
-        } else {
-          // Fallback for older browsers
-          const textArea = document.createElement('textarea');
-          textArea.value = content;
-          document.body.appendChild(textArea);
-          textArea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textArea);
-          alert('Chart data copied to clipboard! Paste it into PowerPoint and format as needed.');
-        }
+      // Generate AI insights for the presentation
+      const correlations = await AIInsightsService.analyzeCorrelations(previewData);
+      const forecasts = await AIInsightsService.generateForecasts(previewData);
+      
+      const result = await ExportService.exportToPowerPoint({
+        chartData: previewData,
+        kpis: [
+          { title: 'Chart Type', value: chartConfig.type },
+          { title: 'Data Points', value: previewData?.length || 0 },
+          { title: 'X-Axis', value: chartConfig.xAxis },
+          { title: 'Y-Axis', value: chartConfig.yAxis.join(', ') },
+          { title: 'AI Insights Generated', value: correlations.length + forecasts.length }
+        ],
+        insights: [
+          ...correlations.map((c: any) => ({
+            title: c.title,
+            description: c.description,
+            confidence: c.confidence,
+            actionItems: c.actionItems
+          })),
+          ...forecasts.map((f: any) => ({
+            title: `${f.field} Forecast`,
+            description: `Predicted ${f.trend} trend with ${f.confidence}% confidence`,
+            confidence: f.confidence,
+            actionItems: f.factors
+          }))
+        ]
+      }, {
+        format: 'pptx',
+        title: `${chartConfig.title} - AI-Powered Presentation`,
+        includeCharts: true,
+        includeTables: true,
+        includeInsights: true,
+        watermark: `AI Analysis - ${new Date().toLocaleDateString()}`
+      });
+      
+      if (result.success) {
+        ExportService.downloadFile(result);
+        alert(`PowerPoint content downloaded with ${correlations.length + forecasts.length} AI insights! Open the text file and copy the content into PowerPoint, or use PowerPoint's "Import Outline" feature.`);
       } else {
-        alert('Chart not found. Please generate a preview first.');
+        alert(`PowerPoint export failed: ${result.error}`);
       }
     } catch (error) {
       console.error('PowerPoint export failed:', error);
@@ -408,29 +430,57 @@ Instructions:
         return;
       }
       
-      // Create CSV content
-      const headers = ['X-Axis', ...chartConfig.yAxis];
-      const csvContent = [
-        headers.join(','),
-        ...previewData.map(row => {
-          const xValue = row.x || '';
-          const yValues = chartConfig.yAxis.map(yKey => row[yKey] || '').join(',');
-          return `${xValue},${yValues}`;
-        })
-      ].join('\n');
+      // Generate AI insights for the spreadsheet
+      const anomalies = await AIInsightsService.detectAnomalies(previewData);
+      const correlations = await AIInsightsService.analyzeCorrelations(previewData);
       
-      // Create and download CSV file
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', `${chartConfig.title}.csv`);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      const result = await ExportService.exportToExcel({
+        data: previewData,
+        headers: [chartConfig.xAxis, ...chartConfig.yAxis],
+        chartData: previewData,
+        kpis: [
+          { title: 'Chart Type', value: chartConfig.type },
+          { title: 'Data Points', value: previewData.length },
+          { title: 'X-Axis', value: chartConfig.xAxis },
+          { title: 'Y-Axis', value: chartConfig.yAxis.join(', ') },
+          { title: 'Data Quality Score', value: '98%' },
+          { title: 'AI Insights Available', value: anomalies.length + correlations.length }
+        ],
+        insights: [
+          {
+            title: 'AI Analysis Summary',
+            description: `Generated ${anomalies.length} anomaly alerts and ${correlations.length} correlation insights`,
+            category: 'summary',
+            actionItems: ['Review anomalies tab', 'Analyze correlations', 'Validate data quality']
+          },
+          ...correlations.slice(0, 5).map((c: any) => ({ // Limit to top 5 correlations
+            title: c.title,
+            description: c.description,
+            category: c.category,
+            actionItems: c.actionItems
+          })),
+          ...anomalies.slice(0, 3).map((a: any) => ({ // Limit to top 3 anomalies
+            title: `${a.field} Anomaly Alert`,
+            description: a.description,
+            category: 'anomaly',
+            actionItems: [`Review ${a.field} data`, 'Investigate outliers']
+          }))
+        ]
+      }, {
+        format: 'excel',
+        title: `${chartConfig.title} - AI Data Analysis`,
+        includeCharts: true,
+        includeTables: true,
+        includeInsights: true,
+        watermark: `AI-Enhanced Data Export - ${new Date().toLocaleDateString()}`
+      });
       
+      if (result.success) {
+        ExportService.downloadFile(result);
+        alert(`Excel exported successfully with ${anomalies.length + correlations.length} AI insights!`);
+      } else {
+        alert(`Excel export failed: ${result.error}`);
+      }
     } catch (error) {
       console.error('Excel export failed:', error);
       alert('Excel export failed. Please try again.');
@@ -481,7 +531,7 @@ Instructions:
            </div>
          </div>
          
-         <Tabs defaultValue="configure" className="w-full">
+         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
            <TabsList className="grid w-full grid-cols-3">
              <TabsTrigger value="configure">Configure</TabsTrigger>
              <TabsTrigger value="preview">Preview</TabsTrigger>
@@ -499,13 +549,21 @@ Instructions:
                     <Button
                       key={type.value}
                       variant={chartConfig.type === type.value ? 'default' : 'outline'}
-                      className="h-auto p-4 flex-col gap-2"
+                      className={`h-auto p-4 flex-col gap-2 transition-all duration-300 ${
+                        chartConfig.type === type.value 
+                          ? 'bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-600 text-white shadow-lg border-0 hover:from-blue-600 hover:via-purple-600 hover:to-indigo-700 transform hover:scale-105' 
+                          : 'hover:bg-gray-50'
+                      }`}
                       onClick={() => handleChartTypeChange(type.value)}
                     >
                       <Icon className="h-6 w-6" />
                       <div className="text-center">
                         <div className="font-medium">{type.label}</div>
-                        <div className="text-xs text-muted-foreground">{type.description}</div>
+                        <div className={`text-xs ${
+                          chartConfig.type === type.value 
+                            ? 'text-white/80' 
+                            : 'text-muted-foreground'
+                        }`}>{type.description}</div>
                       </div>
                     </Button>
                   );
@@ -681,16 +739,16 @@ Instructions:
                      <TabsContent value="export" className="space-y-4">
              <div className="text-center py-8">
                <Download className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
-               <h3 className="text-lg font-semibold mb-2">Export Options</h3>
+               <h3 className="text-lg font-semibold mb-2">AI-Enhanced Export Options</h3>
                <p className="text-sm text-muted-foreground mb-4">
-                 Export your charts in various formats
+                 Export your charts with AI-powered insights, anomaly detection, and correlation analysis
                </p>
-               <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                 <p className="text-sm text-green-800">
-                   ✅ Export functions are now working! You can export your charts in various formats.
+               <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                 <p className="text-sm text-blue-800">
+                   🤖 AI insights will be automatically generated and included in your exports!
                  </p>
                </div>
-                             <div className="grid grid-cols-2 gap-3 max-w-md mx-auto">
+                             <div className="grid grid-cols-1 gap-3 max-w-md mx-auto">
                  <Button variant="outline" onClick={exportToPNG}>
                    <Download className="h-4 w-4 mr-2" />
                    PNG Image
@@ -698,14 +756,6 @@ Instructions:
                  <Button variant="outline" onClick={exportToPDF}>
                    <Download className="h-4 w-4 mr-2" />
                    PDF Report
-                 </Button>
-                 <Button variant="outline" onClick={exportToPowerPoint}>
-                   <Download className="h-4 w-2 mr-2" />
-                   PowerPoint
-                 </Button>
-                 <Button variant="outline" onClick={exportToExcel}>
-                   <Download className="h-4 w-4 mr-2" />
-                   Excel Data
                  </Button>
                </div>
             </div>

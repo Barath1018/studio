@@ -7,8 +7,8 @@ export function Logo() {
         <DollarSign className="h-6 w-6" />
       </div>
       <div>
-        <h1 className="text-xl font-bold text-sidebar-foreground">InsightEdge</h1>
-        <p className="text-xs text-sidebar-foreground/70">Business Intelligence</p>
+        <h1 className="text-xl font-bold text-black">InsightEdge</h1>
+        <p className="text-xs text-black/70">Business Intelligence</p>
       </div>
     </div>
   );

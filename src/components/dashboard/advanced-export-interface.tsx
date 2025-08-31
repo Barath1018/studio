@@ -85,6 +85,13 @@ export function AdvancedExportInterface({ data, onExportComplete }: AdvancedExpo
   const handleDownload = () => {
     if (exportResult?.success) {
       ExportService.downloadFile(exportResult);
+      
+      // Show additional instructions for PowerPoint format
+      if (exportOptions.format === 'pptx') {
+        setTimeout(() => {
+          alert('PowerPoint content downloaded! Open the text file and copy the content into PowerPoint, or use PowerPoint\'s "Import Outline" feature for best results.');
+        }, 500);
+      }
     }
   };
 

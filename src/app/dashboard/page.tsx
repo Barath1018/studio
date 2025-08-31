@@ -17,7 +17,10 @@ import {
   Zap,
   Target,
   TrendingDown,
-  Activity
+  Activity,
+  MessageSquare,
+  AlertTriangle,
+  BarChart3
 } from 'lucide-react';
 import { FileUpload } from '@/components/dashboard/file-upload';
 import { EnhancedKPICard } from '@/components/dashboard/enhanced-kpi-card';
@@ -42,6 +45,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DataAnalysisService, BusinessData, AnalyzedMetrics } from '@/services/data-analysis-service';
+import { AIInsightsService } from '@/services/ai-insights-service';
 import { useBusinessData } from '@/contexts/business-data-context';
 
 const iconMap: { [key: string]: React.ReactNode } = {
@@ -79,7 +83,7 @@ export default function Dashboard() {
   };
 
   const renderEmptyState = () => (
-    <div className="text-center py-16">
+    <div className="text-center py-16 bg-gradient-to-br from-blue-50 via-green-50 to-cyan-50 rounded-lg border border-green-100">
       <Upload className="h-16 w-16 text-gray-300 mx-auto mb-4" />
       <h3 className="text-lg font-medium text-gray-900 mb-2">
         Welcome to Your Advanced Business Intelligence Dashboard
@@ -311,14 +315,183 @@ export default function Dashboard() {
 
         {/* Analytics Tab */}
         <TabsContent value="analytics" className="space-y-6">
-          <div className="text-center py-8">
-            <TrendingUp className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">Advanced Analytics</h3>
-            <p className="text-sm text-muted-foreground">
-              Deep dive into your business data with advanced analytical tools
-            </p>
-          </div>
-          {/* Add more analytics components here */}
+          {businessData ? (
+            <div className="space-y-6">
+              {/* Analytics Header */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold">Advanced Analytics</h3>
+                  <p className="text-sm text-muted-foreground">
+                    AI-powered analytics based on your uploaded data
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    setIsProcessing(true);
+                    try {
+                      const [anomalies, correlations, forecasts] = await Promise.all([
+                        AIInsightsService.detectAnomalies(businessData.data),
+                        AIInsightsService.analyzeCorrelations(businessData.data),
+                        AIInsightsService.generateForecasts(businessData.data)
+                      ]);
+                      alert(`Analysis complete! Found ${anomalies.length} anomalies, ${correlations.length} correlations, and ${forecasts.length} forecasts.`);
+                    } catch (error) {
+                      console.error('Analytics failed:', error);
+                    } finally {
+                      setIsProcessing(false);
+                    }
+                  }}
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                      Analyzing...
+                    </>
+                  ) : (
+                    <>
+                      <TrendingUp className="h-4 w-4 mr-2" />
+                      Run AI Analysis
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {/* Analytics Grid */}
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {/* Data Overview Card */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <BarChart3 className="h-5 w-5" />
+                      Data Overview
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-muted-foreground">Total Records</span>
+                        <span className="font-semibold">{businessData.data.length.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-muted-foreground">Data Fields</span>
+                        <span className="font-semibold">{businessData.headers.length}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-muted-foreground">Numeric Fields</span>
+                        <span className="font-semibold">
+                          {businessData.headers.filter(header => 
+                            businessData.data.some(row => !isNaN(Number(row[header])))
+                          ).length}
+                        </span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* AI Insights Card */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Sparkles className="h-5 w-5" />
+                      AI Insights
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center py-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => setActiveTab('ai-insights')}
+                        className="w-full"
+                      >
+                        <MessageSquare className="h-4 w-4 mr-2" />
+                        Ask AI About Your Data
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Quick Actions Card */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Settings className="h-5 w-5" />
+                      Quick Actions
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <Button variant="outline" size="sm" className="w-full justify-start">
+                        <AlertTriangle className="h-4 w-4 mr-2" />
+                        Detect Anomalies
+                      </Button>
+                      <Button variant="outline" size="sm" className="w-full justify-start">
+                        <TrendingUp className="h-4 w-4 mr-2" />
+                        Generate Forecasts
+                      </Button>
+                      <Button variant="outline" size="sm" className="w-full justify-start">
+                        <BarChart3 className="h-4 w-4 mr-2" />
+                        Create Custom Chart
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* AI Analytics Results */}
+              {analyzedMetrics && (
+                <div className="grid gap-6 md:grid-cols-2">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Key Performance Indicators</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-2 gap-4">
+                        {analyzedMetrics.kpis.map((kpi, index) => (
+                          <div key={index} className="text-center p-4 bg-muted rounded-lg">
+                            <div className="flex items-center justify-center mb-2">
+                              {iconMap[kpi.title] || <BarChart3 className="h-5 w-5" />}
+                            </div>
+                            <p className="text-2xl font-bold">{kpi.value}</p>
+                            <p className="text-sm text-muted-foreground">{kpi.title}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Business Intelligence Insights</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {analyzedMetrics.insights.slice(0, 3).map((insight, index) => (
+                          <div key={index} className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                            <p className="font-medium text-blue-800">{insight.title}</p>
+                            <p className="text-sm text-blue-600 mt-1">{insight.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <TrendingUp className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
+              <h3 className="text-lg font-semibold mb-2">Advanced Analytics</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Upload your business data to access AI-powered analytics
+              </p>
+              <Button variant="outline" onClick={() => setActiveTab('overview')}>
+                <Upload className="h-4 w-4 mr-2" />
+                Upload Data First
+              </Button>
+            </div>
+          )}
         </TabsContent>
 
         {/* AI Insights Tab */}

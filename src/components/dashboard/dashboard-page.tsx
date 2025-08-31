@@ -9,13 +9,12 @@ import {
   Settings,
   TrendingUp,
   Search,
-  User,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, type User } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 
 import {
@@ -36,11 +35,26 @@ import { UserNav } from './user-nav';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { BusinessDataProvider } from '@/contexts/business-data-context';
 
+// Pro Tips array for rotation
+const PRO_TIPS = [
+  "Monitor your profit margins regularly to maintain healthy business growth.",
+  "Use data visualization to identify trends and patterns in your business metrics.",
+  "Set up automated alerts for key performance indicators to stay informed.",
+  "Regular data backup ensures your business insights are always protected.",
+  "Compare year-over-year performance to understand seasonal business patterns.",
+  "Track customer acquisition costs to optimize your marketing budget effectively.",
+  "Implement A/B testing to make data-driven decisions about your products.",
+  "Monitor cash flow patterns to predict and prevent potential financial issues.",
+  "Use cohort analysis to understand customer retention and lifetime value.",
+  "Export reports regularly to share insights with stakeholders and team members."
+];
+
 export default function DashboardPage({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [user, setUser] = useState<onAuthStateChanged | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentTipIndex, setCurrentTipIndex] = useState(0);
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -54,6 +68,15 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
     });
     return () => unsubscribe();
   }, [router]);
+
+  // Pro Tip rotation effect - changes every 30 seconds (30000ms)
+  useEffect(() => {
+    const tipInterval = setInterval(() => {
+      setCurrentTipIndex((prevIndex) => (prevIndex + 1) % PRO_TIPS.length);
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(tipInterval);
+  }, []);
 
   const isActive = (path: string) => {
     // Exact match for dashboard, startsWith for others
@@ -159,9 +182,8 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
               <Lightbulb className="h-6 w-6 text-yellow-400 mb-2" />
               <CardTitle className="text-sm">Pro Tip</CardTitle>
             </CardHeader>
-            <CardContent className="p-4 pt-0 text-xs">
-              Monitor your profit margins regularly to maintain healthy business
-              growth.
+            <CardContent className="p-4 pt-0 text-xs transition-all duration-500 ease-in-out">
+              {PRO_TIPS[currentTipIndex]}
             </CardContent>
           </Card>
           <UserNav email={userEmail} name={userName} />

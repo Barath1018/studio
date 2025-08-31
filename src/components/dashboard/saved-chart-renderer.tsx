@@ -175,3 +175,4 @@ export function SavedChartRenderer({ chart, data }: SavedChartRendererProps) {
     </Card>
   );
 }
+
