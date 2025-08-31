@@ -34,6 +34,7 @@ import { Logo } from '@/components/logo';
 import { Input } from '@/components/ui/input';
 import { UserNav } from './user-nav';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { BusinessDataProvider } from '@/contexts/business-data-context';
 
 export default function DashboardPage({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -70,36 +71,37 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
   }
 
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <Logo />
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <Link href="/dashboard" passHref>
-                <SidebarMenuButton asChild isActive={isActive('/dashboard')}>
-                  <span>
-                    <Home />
-                    Dashboard
-                  </span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <Link href="/dashboard/reports" passHref>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isActive('/dashboard/reports')}
-                >
-                  <span>
-                    <FileText />
-                    Reports
-                  </span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
+    <BusinessDataProvider>
+      <SidebarProvider>
+        <Sidebar>
+          <SidebarHeader>
+            <Logo />
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <Link href="/dashboard" passHref>
+                  <SidebarMenuButton asChild isActive={isActive('/dashboard')}>
+                    <span>
+                      <Home />
+                      Dashboard
+                    </span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <Link href="/dashboard/reports" passHref>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive('/dashboard/reports')}
+                  >
+                    <span>
+                      <FileText />
+                      Reports
+                    </span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
             <SidebarMenuItem>
               <Link href="/dashboard/analytics" passHref>
                 <SidebarMenuButton
@@ -189,6 +191,7 @@ export default function DashboardPage({ children }: { children: ReactNode }) {
           </main>
         </div>
       </SidebarInset>
-    </SidebarProvider>
+      </SidebarProvider>
+    </BusinessDataProvider>
   );
 }

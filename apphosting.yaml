@@ -1,7 +1,8 @@
-# Settings to manage and configure a Firebase App Hosting backend.
-# https://firebase.google.com/docs/app-hosting/configure
+# App Hosting Configuration
+# InsightEdge Studio deployment settings
 
-runConfig:
-  # Increase this value if you'd like to automatically spin up
-  # more instances in response to increased traffic.
-  maxInstances: 1
+app:
+  name: insightedge-studio
+  version: 1.0.0
+  environment: production
+

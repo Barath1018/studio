@@ -13,30 +13,40 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Download, FileText } from 'lucide-react';
-import type { BusinessMetrics } from '@/ai/schemas/business-metrics';
-import { useEffect, useState } from 'react';
-import { generateBusinessMetrics } from '@/ai/flows/generate-business-metrics';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useBusinessData } from '@/contexts/business-data-context';
 
 export default function ReportsPage() {
-  const [reports, setReports] = useState<BusinessMetrics['reports'] | null>(
-    null
-  );
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function getReports() {
-      try {
-        const data = await generateBusinessMetrics();
-        setReports(data.reports);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
+  const { businessData, loading } = useBusinessData();
+  
+  // Use mock reports for now, or generate from business data if available
+  const reports = businessData ? [
+    {
+      name: 'Business Performance Report',
+      date: new Date().toLocaleDateString(),
+      type: 'Performance Analysis',
+      status: 'Final'
+    },
+    {
+      name: 'Revenue Analysis',
+      date: new Date().toLocaleDateString(),
+      type: 'Financial Review',
+      status: 'Final'
+    },
+    {
+      name: 'Customer Insights',
+      date: new Date().toLocaleDateString(),
+      type: 'Customer Analysis',
+      status: 'Final'
     }
-    getReports();
-  }, []);
+  ] : [
+    {
+      name: 'No Reports Available',
+      date: 'Upload required',
+      type: 'Data Required',
+      status: 'Pending'
+    }
+  ];
 
   return (
     <>
@@ -52,7 +62,7 @@ export default function ReportsPage() {
             <CardTitle>Generated Reports</CardTitle>
           </CardHeader>
           <CardContent>
-            {loading ? (
+            {loading && !businessData ? (
               <div className="space-y-4">
                 <Skeleton className="h-12 w-full" />
                 <Skeleton className="h-12 w-full" />

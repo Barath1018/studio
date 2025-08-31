@@ -4,29 +4,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MonthlySalesPerformanceChart } from '@/components/dashboard/monthly-sales-performance-chart';
 import { ProfitTrendAnalysisChart } from '@/components/dashboard/profit-trend-analysis-chart';
-import type { BusinessMetrics } from '@/ai/schemas/business-metrics';
-import { useEffect, useState } from 'react';
-import { generateBusinessMetrics } from '@/ai/flows/generate-business-metrics';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SalesByCategoryChart } from '@/components/dashboard/verification-status-chart';
+import { useBusinessData } from '@/contexts/business-data-context';
 
 export default function AnalyticsPage() {
-  const [metrics, setMetrics] = useState<BusinessMetrics | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function getMetrics() {
-      try {
-        const data = await generateBusinessMetrics();
-        setMetrics(data);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    }
-    getMetrics();
-  }, []);
+  const { businessData, loading } = useBusinessData();
 
   return (
     <>
@@ -37,7 +20,7 @@ export default function AnalyticsPage() {
         </p>
       </div>
       <main className="flex flex-1 flex-col gap-4 pt-4 sm:px-6 sm:py-0 md:gap-8">
-        {loading || !metrics ? (
+        {loading || !businessData ? (
           <div className="grid gap-4 md:gap-8 lg:grid-cols-2">
             <Card className="rounded-2xl shadow-sm">
               <CardHeader>
@@ -63,7 +46,13 @@ export default function AnalyticsPage() {
                 <CardTitle>Monthly Sales Performance</CardTitle>
               </CardHeader>
               <CardContent className="pl-2">
-                <MonthlySalesPerformanceChart data={metrics.chartData} />
+                {businessData ? (
+                  <MonthlySalesPerformanceChart data={businessData.chartData} />
+                ) : (
+                  <div className="h-[300px] w-full flex items-center justify-center text-muted-foreground">
+                    Upload a business file to see analytics
+                  </div>
+                )}
               </CardContent>
             </Card>
             <Card className="rounded-2xl shadow-sm">
@@ -71,7 +60,13 @@ export default function AnalyticsPage() {
                 <CardTitle>Profit Trend Analysis</CardTitle>
               </CardHeader>
               <CardContent className="pl-2">
-                <ProfitTrendAnalysisChart data={metrics.chartData} />
+                {businessData ? (
+                  <ProfitTrendAnalysisChart data={businessData.chartData} />
+                ) : (
+                  <div className="h-[300px] w-full flex items-center justify-center text-muted-foreground">
+                    Upload a business file to see analytics
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

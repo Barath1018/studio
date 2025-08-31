@@ -11,10 +11,8 @@ import {
   TableRow,
   TableHead,
 } from '@/components/ui/table';
-import type { BusinessMetrics } from '@/ai/schemas/business-metrics';
-import { useEffect, useState } from 'react';
-import { generateBusinessMetrics } from '@/ai/flows/generate-business-metrics';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useBusinessData } from '@/contexts/business-data-context';
 
 const iconMap = {
   success: <CheckCircle className="h-5 w-5 text-green-500" />,
@@ -23,23 +21,30 @@ const iconMap = {
 };
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] =
-    useState<BusinessMetrics['notifications'] | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function getNotifications() {
-      try {
-        const data = await generateBusinessMetrics();
-        setNotifications(data.notifications);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
+  const { businessData, loading } = useBusinessData();
+  
+  // Use mock notifications for now, or generate from business data if available
+  const notifications = businessData ? [
+    {
+      type: 'success' as const,
+      title: 'Data Upload Successful',
+      description: `Successfully processed ${businessData.data.length} records from your business file.`,
+      time: 'Just now'
+    },
+    {
+      type: 'info' as const,
+      title: 'Analysis Complete',
+      description: 'Your business data has been analyzed and insights are ready.',
+      time: '2 minutes ago'
     }
-    getNotifications();
-  }, []);
+  ] : [
+    {
+      type: 'info' as const,
+      title: 'No Data Available',
+      description: 'Upload a business file to see notifications and insights.',
+      time: 'Upload required'
+    }
+  ];
 
   return (
     <>
@@ -55,7 +60,7 @@ export default function NotificationsPage() {
             <CardTitle>Recent Notifications</CardTitle>
           </CardHeader>
           <CardContent>
-            {loading ? (
+            {loading && !businessData ? (
               <div className="space-y-4">
                 <Skeleton className="h-16 w-full" />
                 <Skeleton className="h-16 w-full" />

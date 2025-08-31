@@ -1,19 +1,51 @@
-# **App Name**: VisionBoard
+# InsightEdge Studio Blueprint
 
-## Core Features:
+## Overview
+InsightEdge Studio is a comprehensive business intelligence dashboard that transforms raw business data into actionable insights through advanced analytics, AI-powered analysis, and interactive visualizations.
 
-- Dashboard: Dashboard homepage with cards displaying key metrics.
-- Interactive Charts: Display charts including bar, line and pie charts
-- User Authentication: Clean login and signup pages for user authentication.
-- Forgot Password: Form allowing the user to enter email to begin a password reset process.
-- Key Metrics Display: Cards that present metrics (e.g. Children Onboarded, Verified Children, etc.)
+## Core Features
 
-## Style Guidelines:
+### 1. Data Upload & Processing
+- Support for CSV and Excel files
+- Automatic data validation and cleaning
+- Intelligent column type detection
 
-- Primary color: A vibrant blue (#2E9AFE) to reflect a sense of trust and clarity in visualizing data. This color choice avoids the common cliche of green for data applications, yet remains a good match for an objective-looking app.
-- Background color: Light blue (#E6F5FF), a very light tint of the primary color. It ensures the dashboard appears clean and professional.
-- Accent color: A slightly brighter, violet-leaning color (#735CDD) to highlight interactive elements and calls to action. It provides a contrast without being jarring.
-- Body and headline font: 'Inter' sans-serif font for a modern and neutral appearance.
-- Lucide-react icons for a consistent and modern look.
-- Grid-based layout with well-padded cards and a clean overall design.
-- Subtle transitions and animations using Framer Motion to enhance user experience.
+### 2. Interactive Dashboard
+- 6-tab navigation system
+- Real-time KPI monitoring
+- Trend analysis and forecasting
+
+### 3. AI-Powered Insights
+- Natural language query processing
+- Anomaly detection
+- Predictive analytics
+- Correlation analysis
+
+### 4. Advanced Charting
+- Interactive chart builder
+- Multiple chart types (line, bar, pie, scatter)
+- Customizable color schemes and options
+- Real-time preview and configuration
+
+### 5. Export & Reporting
+- Multiple export formats (PDF, PPTX, Excel, PNG, SVG)
+- Customizable report templates
+- Professional presentation layouts
+
+## Technical Architecture
+- Next.js 14 with TypeScript
+- Tailwind CSS for styling
+- Recharts for data visualization
+- Client-side data processing for privacy
+- Responsive design for all devices
+
+## Data Flow
+1. File upload → Data validation → Processing
+2. KPI calculation → Chart generation → Insights
+3. AI analysis → Report generation → Export
+
+## Future Enhancements
+- Real-time data streaming
+- Advanced machine learning models
+- Collaborative features
+- Mobile app development

@@ -1,0 +1,3 @@
+Index files for InsightEdge Studio
+This folder contains indexing artifacts and metadata.
+
