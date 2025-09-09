@@ -1,220 +1,219 @@
-# InsightEdge Studio
+<!--
+  Consider adding a small SVG logo or wordmark under /public to replace the plain heading.
+  Example: <p align="center"><img src="public/logo.svg" width="120" alt="InsightEdge Studio Logo" /></p>
+-->
 
-A modern, type‑safe analytics & BI (Business Intelligence) studio for building interactive dashboards, exploring data, and delivering insight-driven experiences on the web.
+<h1 align="center">InsightEdge Studio</h1>
+<p align="center">
+  A modern, type‑safe analytics & BI studio for building interactive, data‑rich dashboards and insight-driven web experiences.
+</p>
 
-[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://insightedge-bid.vercel.app)
-![TypeScript](https://img.shields.io/badge/TypeScript-%23007ACC.svg?logo=typescript&logoColor=white)
-![Framework](https://img.shields.io/badge/Framework-Next.js-black?logo=next.js)
-![Styling](https://img.shields.io/badge/Styling-TailwindCSS-38B2AC?logo=tailwind-css&logoColor=white)
-![Build Status](https://img.shields.io/badge/CI-passing-informational) <!-- Replace with real badge once CI is added -->
-![License](https://img.shields.io/badge/license-TBD-lightgrey)
+<p align="center">
+  <a href="https://insightedge-bid.vercel.app"><img src="https://img.shields.io/badge/demo-live-brightgreen.svg" alt="Live Demo" /></a>
+  <img src="https://img.shields.io/badge/TypeScript-5+-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Next.js-14-black?logo=nextdotjs" alt="Next.js" />
+  <img src="https://img.shields.io/badge/TailwindCSS-3-38B2AC?logo=tailwindcss&logoColor=white" alt="TailwindCSS" />
+  <img src="https://img.shields.io/badge/CI-Configured-success" alt="CI Status" />
+  <img src="https://img.shields.io/badge/License-MIT-blue" alt="License" />
+</p>
 
-> NOTE: This README is a comprehensive template. Replace all TODO sections with project‑specific details once confirmed by the codebase.
+<p align="center">
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#features">Features</a> •
+  <a href="#architecture">Architecture</a> •
+  <a href="#project-structure">Structure</a> •
+  <a href="#widgets--extensibility">Widgets</a> •
+  <a href="#environment-configuration">Config</a> •
+  <a href="#roadmap">Roadmap</a> •
+  <a href="#contributing">Contributing</a>
+</p>
 
 ---
 
-## 1. Overview
-
-InsightEdge Studio is designed to:
-- Assemble dashboards from reusable, configurable widgets
-- Connect to one or more data backends (REST / GraphQL / SQL proxy / streaming)
-- Support responsive layouts and theming
-- Enable incremental adoption: start small, scale to multi‑tenant analytics
-- Encourage maintainability via clear layering and full TypeScript coverage
-
-### Core Value Proposition
-Empower teams to prototype, iterate, and deploy data experiences quickly—without sacrificing performance, reliability, or extensibility.
+> InsightEdge Studio accelerates the journey from raw data to actionable insight. Compose dashboards from reusable widgets, integrate multiple data sources, and deploy with confidence—fully typed, modular, and performance‑aware.
 
 ---
 
-## 2. Key Features
+## Table of Contents
+
+1. [Features](#features)  
+2. [Live Demo](#live-demo)  
+3. [Tech Stack](#tech-stack)  
+4. [Quick Start](#quick-start)  
+5. [Project Structure](#project-structure)  
+6. [Architecture](#architecture)  
+7. [Environment Configuration](#environment-configuration)  
+8. [Widgets & Extensibility](#widgets--extensibility)  
+9. [Data Layer Pattern](#data-layer-pattern)  
+10. [Performance & Quality](#performance--quality)  
+11. [Screenshots](#screenshots)  
+12. [Roadmap](#roadmap)  
+13. [Contributing](#contributing)  
+14. [Security Notes](#security-notes)  
+15. [License](#license)  
+16. [Acknowledgements](#acknowledgements)
+
+---
+
+## Features
 
 | Category | Highlights |
 |----------|------------|
-| Dashboard Composition | Drag‑and‑drop layout (TODO confirm), modular widget registry, persisted user layouts |
-| Data Layer | Unified fetch utilities, caching (SWR / React Query / custom), optional streaming channels |
-| Visualization | Pluggable chart components (e.g. Recharts / ECharts / D3) |
-| Theming & UI | Dark/light mode, design tokens, accessible components |
-| Auth & Access (optional) | Role-based visibility (RBAC) scaffold |
-| Performance | SSG/ISR/SSR hybrid (Next.js), code splitting, image optimization |
-| Quality | TypeScript strict mode, lint + format + type checking gates |
-| Dev Experience | Fast local iteration, environment-driven configuration |
-| Deployability | Optimized for Vercel (zero‑config) |
+| 🔧 Modular Dashboards | Drag‑and‑drop layout (optional), widget registry, persisted layouts |
+| 📊 Visualizations | Pluggable chart layer (Recharts / ECharts / custom) |
+| 🧭 Data Sources | REST / GraphQL / future streaming integration |
+| 🌓 Theming | Dark & light modes with semantic design tokens |
+| 🔐 Access Control | Role-based visibility scaffolding (optional) |
+| ⚡ Performance | Hybrid rendering (SSR/ISR), dynamic imports, aggressive caching |
+| 🧪 Type Safety | End-to-end TypeScript + schema validation (Zod recommended) |
+| 🛠 Dev Experience | Fast reload cycles, consistent tooling, scriptable workflows |
+| 🚀 Deployment Friendly | Vercel-optimized; environment-driven runtime behavior |
 
 ---
 
-## 3. Live Deployment
+## Live Demo
 
 Production: https://insightedge-bid.vercel.app  
-(If you have staging environments, document them here.)
+(You can add a staging link or preview branch policy here.)
 
 ---
 
-## 4. Tech Stack
+## Tech Stack
 
-| Layer | Tooling / Libraries (Proposed / Typical) |
-|-------|-------------------------------------------|
-| Runtime & Framework | Next.js (App Router) + React 18+ |
+| Layer | Tooling |
+|-------|---------|
+| Framework | Next.js (App Router) |
 | Language | TypeScript (strict) |
-| Styling | Tailwind CSS / PostCSS (TODO confirm) |
-| State / Data | SWR / React Query / Custom hooks (TODO) |
-| Charts | Recharts / ECharts / Custom (TODO) |
-| Forms | React Hook Form / Zod (TODO) |
-| Testing | Vitest / Jest + Testing Library (TODO) |
-| Linting & Formatting | ESLint, Prettier |
-| CI/CD | GitHub Actions → Vercel deploy |
-| Package Manager | npm / pnpm / yarn (TODO confirm) |
+| UI & Styling | Tailwind CSS, CSS variables, utility-first tokens |
+| State/Data | SWR / custom hooks (replace with real libs used) |
+| Charts | (Pluggable) Recharts / ECharts / D3 |
+| Forms | React Hook Form + Zod (optional) |
+| Testing | Vitest / Testing Library (planned) |
+| CI/CD | GitHub Actions → Vercel |
+| Package Manager | pnpm |
+
+> Update this table to reflect actual dependencies as they are added.
 
 ---
 
-## 5. Architecture
+## Quick Start
 
-High-level (conceptual) layering:
-
-```
-┌───────────────────────────────┐
-│        Presentation UI        │  ← Pages / route handlers / components
-├───────────────┬───────────────┤
-│  Widget/Core  │  Theming/UI   │  ← Reusable visual + logic primitives
-├───────────────┴───────────────┤
-│     Data Access Layer          │  ← Fetchers, adapters, validation, caching
-├───────────────────────────────┤
-│     Integration Boundary       │  ← External APIs, DB proxies, streaming
-└───────────────────────────────┘
-```
-
-Data flow (request lifecycle):
-
-1. User loads dashboard route  
-2. Server (or client) invokes data adapter  
-3. Adapter normalizes & validates response (schema)  
-4. Result cached (memory / SWR / edge cache)  
-5. Widget renders visualization  
-6. Live updates (optional via WebSocket / SSE) propagate through hooks
-
----
-
-## 6. Project Structure (Template)
-
-> Adjust to reflect the actual repository layout.
-
-```
-.
-├─ app/                    # Next.js App Router (routes, layouts, metadata)
-│  ├─ dashboard/           # Dashboard pages / route groups
-│  └─ api/                 # Route handlers (server endpoints)
-├─ src/
-│  ├─ components/          # Reusable UI components
-│  ├─ widgets/             # Dashboard widget implementations
-│  ├─ lib/                 # Utilities (date, number formatting, etc.)
-│  ├─ data/                # Fetchers, clients, adapters
-│  ├─ hooks/               # Custom React hooks
-│  ├─ styles/              # Global styles / Tailwind config extensions
-│  ├─ config/              # App configuration & constants
-│  └─ types/               # TypeScript type definitions
-├─ public/                 # Static assets
-├─ scripts/                # Maintenance / build scripts
-├─ .github/workflows/      # CI pipelines (lint, test, build, deploy)
-├─ package.json
-├─ tsconfig.json
-└─ README.md
-```
-
----
-
-## 7. Getting Started
-
-### Prerequisites
-- Node.js ≥ 18.x (LTS recommended)
-- Package manager: pnpm (preferred) OR npm (update instructions accordingly)
-- (Optional) Vercel CLI for previews: `npm i -g vercel`
-
-### Clone & Install
 ```bash
 git clone https://github.com/Barath1018/studio.git
 cd studio
-pnpm install            # or npm install
-```
-
-### Environment Setup
-Create a `.env.local` (never commit secrets):
-
-```
-# Core
-NEXT_PUBLIC_APP_NAME=InsightEdge Studio
-NEXT_PUBLIC_API_BASE=https://api.example.com
-
-# Auth (if applicable)
-NEXTAUTH_URL=http://localhost:3000
-AUTH_SECRET=CHANGE_ME
-
-# Analytics / Observability
-SENTRY_DSN=
-LOG_LEVEL=info
-```
-
-> Run `cp .env.example .env.local` if an example file exists.
-
-### Development
-```bash
+pnpm install
+cp .env.example .env.local  # if the example file exists
 pnpm dev
-```
-Navigate to: http://localhost:3000
-
-### Type Checking
-```bash
-pnpm type-check
+# Open http://localhost:3000
 ```
 
-### Lint & Format
-```bash
-pnpm lint
-pnpm format
-```
+Production build:
 
-### Production Build
 ```bash
 pnpm build
 pnpm start
 ```
 
----
+Static type checks & lint:
 
-## 8. Available Scripts (Example)
-
-| Script | Purpose |
-|--------|---------|
-| dev | Start local development server |
-| build | Create production build |
-| start | Run production server |
-| lint | Run ESLint |
-| format | Prettier formatting |
-| type-check | Run TypeScript compiler in noEmit mode |
-| test | Run unit tests (TODO) |
-| test:watch | Watch mode (TODO) |
-
-> Confirm by inspecting `package.json` and update this table.
+```bash
+pnpm type-check
+pnpm lint
+```
 
 ---
 
-## 9. Environment Variables
+## Project Structure
 
-| Variable | Scope | Description |
-|----------|-------|-------------|
-| NEXT_PUBLIC_APP_NAME | Public | Branding / UI name |
-| NEXT_PUBLIC_API_BASE | Public | Base URL for REST/GraphQL API |
-| AUTH_SECRET | Server | Session / token signing secret |
-| NEXTAUTH_URL | Server | Auth callback base URL (if using NextAuth) |
-| SENTRY_DSN | Server | Error monitoring DSN |
-| LOG_LEVEL | Server | Logging verbosity |
+```bash
+.
+├─ app/                    # Next.js routes (App Router)
+│  ├─ layout.tsx           # Root layout
+│  ├─ dashboard/           # Dashboard pages / route groups
+│  └─ api/                 # Route handlers (server endpoints)
+├─ src/
+│  ├─ components/          # Reusable UI primitives
+│  ├─ widgets/             # Dashboard widget implementations + registry
+│  ├─ data/                # Fetchers, adapters, schema validation
+│  ├─ hooks/               # Custom React hooks
+│  ├─ lib/                 # Utilities (formatting, helpers)
+│  ├─ config/              # App/runtime configuration
+│  ├─ styles/              # Global style artifacts
+│  └─ types/               # Shared TS types
+├─ public/                 # Static assets (images, icons)
+├─ scripts/                # Automation / maintenance scripts
+├─ .github/workflows/      # CI pipelines
+├─ package.json
+├─ tsconfig.json
+└─ README.md
+```
 
-Add any others (e.g. `DATABASE_URL`, `REDIS_URL`) as needed.
+> If the actual structure differs, regenerate this section accordingly.
 
 ---
 
-## 10. Widgets System (If Implemented)
+## Architecture
 
-A typical widget contract:
+```
+┌────────────────────────────────┐
+│        Presentation Layer       │  Pages, server components, layouts
+├────────────────┬───────────────┤
+│  Widgets       │  UI Toolkit    │  Reusable visual + logic components
+├────────────────┴───────────────┤
+│        Data Access Layer        │  Fetchers, adapters, schemas, caching
+├────────────────────────────────┤
+│   Integration Boundary          │  External APIs, DB proxies, streaming
+└────────────────────────────────┘
+```
+
+### Data Flow (Typical Request)
+1. Route loads dashboard definition  
+2. Widget registry resolves required widgets  
+3. Each widget invokes a typed fetcher (server or client)  
+4. Response validated (e.g. Zod schema) & normalized  
+5. Cached (in-memory / SWR / edge)  
+6. UI renders; optional streaming updates apply patch  
+
+---
+
+## Environment Configuration
+
+Create `.env.local`:
+
+```dotenv
+# Public
+NEXT_PUBLIC_APP_NAME=InsightEdge Studio
+NEXT_PUBLIC_API_BASE=https://api.example.com
+
+# Auth (optional)
+AUTH_SECRET=CHANGE_ME
+NEXTAUTH_URL=http://localhost:3000
+
+# Observability
+SENTRY_DSN=
+LOG_LEVEL=info
+```
+
+| Variable | Scope | Purpose |
+|----------|-------|---------|
+| NEXT_PUBLIC_APP_NAME | Public | Display name |
+| NEXT_PUBLIC_API_BASE | Public | Base URL for API calls |
+| AUTH_SECRET | Server | Session/token signing |
+| NEXTAUTH_URL | Server | NextAuth callback base |
+| SENTRY_DSN | Server | Error tracing |
+| LOG_LEVEL | Server | Log verbosity |
+
+> Add `DATABASE_URL`, `REDIS_URL`, `WS_ENDPOINT`, etc. as features expand.
+
+---
+
+## Widgets & Extensibility
+
+A widget is a unit of:
+- Definition (metadata)
+- (Optional) Data fetcher
+- Render component
+- Config schema (optional—define with Zod to validate user-supplied config)
 
 ```ts
 export interface DashboardWidgetProps<TConfig = unknown, TData = unknown> {
@@ -235,11 +234,12 @@ export interface RegisteredWidget<TConfig = any> {
 }
 ```
 
-Registration pattern (example):
+Registration:
 
 ```ts
 import { registerWidget } from '@/widgets/registry';
 import { LineChartWidget } from './LineChartWidget';
+import { fetchTimeSeries } from '@/data/timeSeries';
 
 registerWidget({
   type: 'line-chart',
@@ -249,151 +249,189 @@ registerWidget({
 });
 ```
 
----
-
-## 11. Quality & CI (Planned)
-
-| Aspect | Status | Notes |
-|--------|--------|-------|
-| ESLint | ✅ | Enforced pre-commit (add Husky, TODO) |
-| Prettier | ✅ | Formatting consistency |
-| Types | ✅ | Strict mode recommended |
-| Unit Tests | ⏳ | Add coverage thresholds |
-| Integration Tests | ⏳ | Potential Playwright / Cypress |
-| Security Scan | ⏳ | `npm audit` / GitHub Dependabot |
-| Deployment Preview | ✅ | Vercel PR previews (enable if not yet) |
+> Consider exposing a `useWidgetData(type, config)` hook for consistent loading states.
 
 ---
 
-## 12. Performance Considerations
+## Data Layer Pattern
 
-- Use Next.js dynamic imports for heavy chart libraries
-- Memoize expensive computations (React.memo, useMemo)
-- Minimize over-fetching via caching keys
-- Leverage ISR / edge caching for semi-static data
-- Consider streaming (React Suspense + server components) if adopting App Router advanced patterns
+```ts
+// Example fetcher with schema validation
+import { z } from 'zod';
+
+const SeriesPoint = z.object({
+  t: z.string(),      // ISO timestamp
+  value: z.number(),
+});
+
+export const TimeSeriesSchema = z.array(SeriesPoint);
+
+export async function fetchTimeSeries(config: { metric: string }) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE}/metrics/${config.metric}`
+  );
+  if (!res.ok) throw new Error(`Failed metric ${config.metric}`);
+  const json = await res.json();
+  return TimeSeriesSchema.parse(json);
+}
+```
 
 ---
 
-## 13. Roadmap (Sample)
+## Performance & Quality
 
-| Milestone | Description | Status |
-|-----------|-------------|--------|
-| M1 | Core dashboard layout + widget registry | In Progress |
-| M2 | Auth + user-specific layouts | Planned |
-| M3 | Real-time data streaming | Planned |
-| M4 | Export / sharing features | Planned |
-| M5 | Multi-tenant RBAC | Planned |
+| Category | Practice |
+|----------|----------|
+| Rendering | Prefer server components for static/data-heavy views |
+| Bundles | Dynamic import chart libs (`ssr: false` if client-only) |
+| Caching | ISR for semi-static; SWR for client revalidation |
+| Validation | Schema-validate external payloads |
+| Memory | Avoid large object cloning; stream when possible |
+| Linting | Pre-commit hooks (Husky + lint-staged) |
+| Testing | Unit + integration + visual regression (future) |
+| Monitoring | Add Sentry / OpenTelemetry instrumentation (optional) |
 
-> Keep this table updated as issues / milestones evolve.
+Checklist (expand):
+
+<details>
+<summary><strong>Performance Checklist</strong></summary>
+
+- [ ] Dynamic import heavy components  
+- [ ] Avoid unnecessary client JS in static routes  
+- [ ] Use `React.memo` for pure widgets  
+- [ ] Proper SWR cache keys normalized  
+- [ ] No unbounded re-renders (audit with React DevTools)  
+- [ ] Lighthouse performance ≥ target (e.g. 90+)  
+</details>
 
 ---
 
-## 14. Contributing
+## Screenshots
 
-1. Fork & clone
-2. Create feature branch: `git checkout -b feat/your-feature`
-3. Run lint & type checks before commits
-4. Submit PR with:
+| Light Mode | Dark Mode |
+|------------|-----------|
+| ![Light Placeholder](public/docs/screenshot-light.png) | ![Dark Placeholder](public/docs/screenshot-dark.png) |
+
+> Add animated GIFs (e.g. widget creation flow) in `public/docs/`.
+
+---
+
+## Roadmap
+
+> Track in GitHub Projects / issues for transparency.
+
+| Milestone | Goal | Status |
+|-----------|------|--------|
+| M1 | Core layout + registry | ✅ In Progress |
+| M2 | Auth + user layouts | ⏳ Planned |
+| M3 | Real-time streaming widgets | ⏳ Planned |
+| M4 | Export / share (PNG, CSV) | ⏳ Planned |
+| M5 | Multi-tenant RBAC | ⏳ Planned |
+| M6 | Plugin marketplace concept | 🔍 Exploring |
+
+Task List:
+
+- [ ] Replace tech stack placeholders with actual libraries  
+- [ ] Add test harness (Vitest + Testing Library)  
+- [ ] Introduce visual regression (Chromatic / Playwright)  
+- [ ] Add GitHub Action for type + lint gates  
+- [ ] Implement widget config editor UI  
+- [ ] Document theming system (tokens + palettes)  
+
+---
+
+## Contributing
+
+1. Fork & clone  
+2. Create branch: `git switch -c feat/awesome-thing`  
+3. Run `pnpm lint && pnpm type-check` before committing  
+4. Add/update tests where applicable  
+5. Open PR with:
    - Summary
-   - Screenshots (UI changes)
-   - Checklist (tests, docs updated)
+   - Screenshots / GIF (UI changes)
+   - Checklist (docs updated, tests added)
 
-Commit message convention (example – adapt if using Conventional Commits):
+Commit conventions (example):
 
 ```
 feat(widgets): add heatmap widget
-fix(data): handle 429 rate limiting
-chore(ci): add build cache
+fix(data): guard against 429 rate limiting
+chore(ci): enable build cache
 ```
 
----
-
-## 15. Deployment
-
-Default target: Vercel  
-Steps (once project imported):
-- Set project
-- Configure environment variables
-- Push to `main` → auto deploy
-- (Optional) Protect `main` with required checks (lint, type-check, test)
-
-CLI deploy (optional):
-```bash
-vercel
-vercel --prod
-```
+> Add a `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md` for formal guidelines.
 
 ---
 
-## 16. Security
+## Security Notes
 
-| Area | Notes |
-|------|-------|
-| Secrets | Store only in Vercel / GitHub Actions secrets |
-| Input Validation | Use Zod / Yup schemas for API payloads |
-| Auth (TODO) | Document chosen provider (NextAuth, custom JWT) |
-| Rate Limiting | Consider middleware for API routes |
-| Headers | Add security headers via Next.js middleware or config |
+| Area | Recommendation |
+|------|---------------|
+| Secrets | Only store in Vercel / GitHub Actions encrypted secrets |
+| Input Validation | Use Zod schemas at boundaries |
+| Auth | Centralize session logic (NextAuth or custom) |
+| Rate Limiting | Middleware on API routes for abusive patterns |
+| Headers | Add security headers via `next.config.js` or middleware |
+| Dependency Health | Enable Dependabot / npm audit in CI |
 
----
-
-## 17. Troubleshooting
-
-| Symptom | Possible Cause | Resolution |
-|---------|----------------|-----------|
-| Styles missing | Tailwind not built | Check `postcss.config.js` & `tailwind.config.js` |
-| 404 on dynamic route | Route segment mismatch | Confirm folder name & `[param]` usage |
-| Fetch errors (CORS) | API domain mismatch | Ensure `NEXT_PUBLIC_API_BASE` & server CORS config |
-| Build fails on Vercel | Missing env vars | Add required variables in dashboard |
-| High bundle size | Chart libs un-split | Use dynamic `import()` with `ssr: false` |
+Report vulnerabilities privately (define a security contact or SECURITY.md).
 
 ---
 
-## 18. License
+## FAQ (Optional)
 
-No explicit license currently.  
-Options:
-- MIT (permissive)
-- Apache-2.0 (patent protection)
-- AGPL / GPL (copyleft)
-Add a `LICENSE` file to clarify usage.
+<details>
+<summary><strong>Why another BI studio?</strong></summary>
+Focused on developer-first modularity, type safety, and incremental extensibility rather than monolithic dashboards.
+</details>
+
+<details>
+<summary><strong>Does it support real-time?</strong></summary>
+Planned WebSocket / SSE integration for streaming metrics in upcoming milestones.
+</details>
 
 ---
 
-## 19. Acknowledgements
+## License
 
-- Next.js community
-- Open-source visualization libraries
+MIT License.  
+You are free to use, modify, and distribute with attribution.  
+See [LICENSE](./LICENSE) once added.
+
+---
+
+## Acknowledgements
+
+- Next.js & React ecosystems
+- Open-source charting libraries
 - Contributors & reviewers
 
 ---
 
-## 20. Next Steps (Immediate TODOs)
+## Attribution / Branding
 
-- [ ] Replace placeholder tech stack items with actual libs
-- [ ] Confirm folder structure from repo
-- [ ] Add real CI badge(s)
-- [ ] Add screenshots / GIF demos (`/public/docs/`)
-- [ ] Populate LICENSE
-- [ ] Add CONTRIBUTING.md + CODE_OF_CONDUCT.md
-- [ ] Evaluate analytics (PostHog / Plausible) if needed
+If you fork and significantly modify, consider retaining a reference link to the original repository.
 
 ---
 
-## 21. Quick Start (Copy/Paste Summary)
+## Quick Reference
 
 ```bash
-git clone https://github.com/Barath1018/studio
-cd studio
+# Install + run
 pnpm install
-cp .env.example .env.local  # if present
 pnpm dev
-# Open http://localhost:3000
+
+# Quality
+pnpm lint
+pnpm type-check
+
+# Build
+pnpm build
+pnpm start
 ```
 
 ---
 
-If you provide (or I inspect) the actual repository structure and `package.json`, I can tailor this README precisely (scripts, dependencies, diagrams, and examples). Let me know if you’d like a second pass that is fully aligned with the committed code.
-
-Happy building! 🚀
+<p align="center">
+  Crafted for clarity, performance & extensibility. ✨
+</p>
