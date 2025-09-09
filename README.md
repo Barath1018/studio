@@ -1,5 +1,7 @@
-<h1 align="center">InsightEdge Studio (Starter)</h1>
+<!-- Anchor for "Back to Top" links -->
+<a id="readme-top"></a>
 
+<h1 align="center">InsightEdge Studio (Starter)</h1>
 <p align="center">
   <strong>Composable, type‑safe analytics & dashboarding layer for modern React / Next.js apps.</strong><br/>
   <em>Build internal or customer‑facing insight surfaces without adopting a monolithic BI platform.</em>
@@ -9,46 +11,64 @@
   <!-- Optional: add /public/logo.svg and uncomment
   <img src="public/logo.svg" width="120" alt="InsightEdge Studio Logo" />
   -->
-  <a href="https://insightedge-bid.vercel.app"><img alt="Live Demo" src="https://img.shields.io/badge/Demo-Live-brightgreen?style=for-the-badge" /></a>
-  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5+-3178C6?logo=typescript&logoColor=white&style=for-the-badge" />
+  <a href="https://insightedge-bid.vercel.app">
+    <img alt="Live Demo" src="https://img.shields.io/badge/Demo-Live-brightgreen?style=for-the-badge" />
+  </a>
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5%2B-3178C6?logo=typescript&logoColor=white&style=for-the-badge" />
   <img alt="Next.js" src="https://img.shields.io/badge/Next.js-14-black?logo=nextdotjs&style=for-the-badge" />
   <img alt="TailwindCSS" src="https://img.shields.io/badge/TailwindCSS-3-38B2AC?logo=tailwindcss&logoColor=white&style=for-the-badge" />
   <img alt="Status" src="https://img.shields.io/badge/Project_Status-Early_Alpha-orange?style=for-the-badge" />
-  <img alt="License" src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" />
-</p>
-
-<p align="center">
-  <a href="#tldr">TL;DR</a> •
-  <a href="#quick-start">Quick Start</a> •
-  <a href="#project-status">Status</a> •
-  <a href="#why">Why?</a> •
-  <a href="#features">Features</a> •
-  <a href="#architecture">Architecture</a> •
-  <a href="#widgets">Widgets</a> •
-  <a href="#data-layer">Data Layer</a> •
-  <a href="#roadmap">Roadmap</a> •
-  <a href="#contributing">Contribute</a>
+  <a href="#license"><img alt="License" src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" /></a>
 </p>
 
 ---
 
-## 🧪 TL;DR
+## Table of Contents
+- [TL;DR](#tldr)
+- [Quick Start](#quick-start)
+- [Project Status](#project-status)
+- [Why?](#why)
+- [Features](#features)
+- [Design Principles](#design-principles)
+- [Architecture](#architecture)
+- [Widgets](#widgets)
+- [Data Layer](#data-layer)
+- [Extensibility & Future Plugins](#extensibility)
+- [Environment Variables](#environment-variables)
+- [Quality & Performance](#quality--performance)
+- [Roadmap](#roadmap)
+- [Security Notes](#security-notes)
+- [Scripts](#scripts)
+- [Screenshots](#screenshots)
+- [FAQ](#faq)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
+- [Quick Reference](#quick-reference)
 
-You register widgets (metadata + component + optional data fetcher), compose them into dashboards, and let a small typed framework handle layout, validation, theming, and extension points.
+---
+
+<a id="tldr"></a>
+## 🧪 TL;DR
+You register widgets (metadata + component + optional data fetcher), compose them into dashboards, and a small typed framework handles layout, validation, theming, and extension points.
 
 Use this if you:
-- Need “just enough BI” in-product
-- Want type safety & extensibility over drag‑and‑drop SaaS lock‑in
-- Prefer incremental build-up (start static → add auth → add streaming)
+- Need “just enough BI” in-product.
+- Want type safety & extensibility over drag‑and‑drop SaaS lock‑in.
+- Prefer incremental build-up (start static → add auth → add streaming).
+
+[⬆ Back to Top](#readme-top)
 
 ---
 
+<a id="quick-start"></a>
 ## 🚀 Quick Start
 
 Prerequisites:
-- Node 18.18+ (or 20+ recommended)
+- Node 18.18+ (20+ recommended)
 - pnpm 8+
-- (Optional) API endpoint to supply data
+- (Optional) API endpoint for metrics/services
 
 ```bash
 git clone https://github.com/Barath1018/studio
@@ -59,57 +79,88 @@ pnpm dev
 # → http://localhost:3000
 ```
 
-Minimal env:
-
+Minimal `.env.local`:
 ```dotenv
 NEXT_PUBLIC_APP_NAME=InsightEdge Studio
 NEXT_PUBLIC_API_BASE=https://api.example.com
-# Auth (only if NextAuth or similar actually configured)
+# Auth (only if NextAuth or similar configured)
 AUTH_SECRET=CHANGE_ME
 NEXTAUTH_URL=http://localhost:3000
 ```
 
-If you are NOT using auth yet, you can omit `AUTH_SECRET` / `NEXTAUTH_URL`.
+If you are not using auth yet, omit `AUTH_SECRET` / `NEXTAUTH_URL`.
+
+### Example: Defining a Dashboard Layout
+Create (or adapt) a layout file, e.g. `src/config/dashboardLayouts.ts`:
+```ts
+export const defaultDashboard = [
+  {
+    id: 'w1',
+    type: 'time-series',
+    title: 'Active Users (5m)',
+    config: { metric: 'active_users_5m' },
+    layout: { x: 0, y: 0, w: 4, h: 3 }
+  },
+  {
+    id: 'w2',
+    type: 'line-chart',
+    title: 'Revenue Trend',
+    config: { metric: 'rev_daily' },
+    layout: { x: 4, y: 0, w: 4, h: 3 }
+  }
+];
+```
+
+Then ensure the dashboard route imports and renders these items via the registry.
+
+[⬆ Back to Top](#readme-top)
 
 ---
 
+<a id="project-status"></a>
 ## 📊 Project Status
 
 | Area | State | Notes |
 |------|-------|-------|
-| Core Layout | Alpha | Basic dashboard route and layout grid present |
-| Widget Registry | Alpha | Manual registration pattern implemented |
+| Core Layout | Alpha | Basic dashboard route & grid |
+| Widget Registry | Alpha | Manual registration pattern |
 | Theming | Basic | Light/dark tokens; extendable |
 | Data Fetching | Basic | Fetcher pattern; sample validation |
-| Auth | Planned | Env vars prepared, logic may not be wired |
-| Real-time | Planned | Placeholder in architecture |
-| Persistence (user layouts) | In Progress | Confirm actual persistence implementation before claiming |
-| Plugin System | Concept | Not implemented yet |
+| Auth | Planned | Env vars wired; logic pending |
+| Real-time | Planned | Future SSE / WebSocket |
+| Persistence (user layouts) | In Progress | Confirm implementation before claiming |
+| Plugin System | Concept | Not implemented |
 
-> Adjust this table as features land to avoid misrepresentation.
+> Keep this table current to avoid misrepresentation.
+
+[⬆ Back to Top](#readme-top)
 
 ---
 
-## 💡 Why
+<a id="why"></a>
+## 💡 Why?
 
 | Pain | Conventional Outcome | This Approach |
 |------|----------------------|---------------|
 | Ad‑hoc dashboard sprawl | Unstructured components | Formal widget contract |
 | Data shape inconsistency | Runtime surprises | Schema validation layer |
-| Heavy chart libs everywhere | Large bundles | Lazy/dynamic import strategy |
+| Heavy chart libs everywhere | Large bundles | Lazy/dynamic imports |
 | Theming drift | Inconsistent styling | Central tokens & variants |
 | Hard to extend safely | Hidden coupling | Explicit registries & adapters |
 
+[⬆ Back to Top](#readme-top)
+
 ---
 
+<a id="features"></a>
 ## ✨ Features (Implemented / Planned)
 
 | Category | Current | Planned |
 |----------|---------|---------|
-| Widget Registry | ✅ | Enhanced metadata, plugin discovery |
+| Widget Registry | ✅ | Enhanced metadata, discovery |
 | Layout Composition | ✅ | Persist per user / org |
-| Validation (Zod-ready) | ✅ | Auto‑generated types from schemas |
-| Data Adapters | 🟡 (basic fetchers) | Caching tiers, fallbacks |
+| Validation (Zod-ready) | ✅ | Auto‑generated types |
+| Data Adapters | 🟡 Basic | Caching tiers, fallbacks |
 | Theming | ✅ | Semantic token packs |
 | Real-time | ❌ | WebSocket / SSE bridges |
 | Auth Integration | ❌ | Multi-tenant + RBAC |
@@ -118,35 +169,54 @@ If you are NOT using auth yet, you can omit `AUTH_SECRET` / `NEXTAUTH_URL`.
 
 Legend: ✅ available • 🟡 partial • ❌ not yet
 
+[⬆ Back to Top](#readme-top)
+
 ---
 
-## 🧱 Project Structure (Overview)
+<a id="design-principles"></a>
+## 🧭 Design Principles
+1. Type Safety First – contracts prevent runtime surprises.
+2. Progressive Enhancement – start static; layer streaming or auth later.
+3. Explicit Registries – avoid “magic” auto-glob patterns that hide coupling.
+4. Lean Core – no forced vendor lock-in; you own adapters.
+5. Extensible Boundaries – registries, adapters, and schema gates are stable extension points.
+6. Performance via Intent – dynamic import heavy libs, pre-validate data, minimize hydration.
 
-```bash
-.
-├─ app/                # Next.js App Router
-│  ├─ dashboard/       # Dashboard route(s)
-│  └─ api/             # Route handlers
-├─ src/
-│  ├─ widgets/         # Widget implementations + registry
-│  ├─ components/      # UI primitives / composites
-│  ├─ data/            # Fetchers, adapters, schemas
-│  ├─ hooks/           # Reusable client/server hooks
-│  ├─ lib/             # Utilities & helpers
-│  ├─ config/          # Runtime constants
-│  ├─ styles/          # Tailwind/global styles
-│  └─ types/           # Shared TypeScript types
-└─ public/             # Static assets (images, docs)
+[⬆ Back to Top](#readme-top)
+
+---
+
+<a id="architecture"></a>
+## 🏗 Architecture
+
+```
+Routes / Layouts (Next.js server & client boundaries)
+    ↓
+Widgets Layer (registry, typed config, rendering)
+    ↓
+Data Layer (fetchers, adapters, validation, caching)
+    ↓
+Integration Boundary (REST / GraphQL / future streaming)
 ```
 
+Execution Flow (request-time):
+1. Dashboard route resolves layout definition.
+2. Registry enumerates required fetchers.
+3. Fetchers run (server preferred; fallback client).
+4. Data normalized & validated.
+5. Components render with loading / error states.
+6. (Future) Real-time patches hydrate via SSE / WebSockets.
+
+[⬆ Back to Top](#readme-top)
+
 ---
 
+<a id="widgets"></a>
 ## 🧩 Widgets
 
 A widget = metadata + (optional) fetcher + UI component.
 
 ```ts
-// types/widgets.ts
 export interface DashboardWidgetProps<TConfig = unknown, TData = unknown> {
   id: string;
   title: string;
@@ -166,7 +236,6 @@ export interface RegisteredWidget<TConfig = any> {
 ```
 
 Registration example:
-
 ```ts
 registerWidget({
   type: 'line-chart',
@@ -176,16 +245,15 @@ registerWidget({
 });
 ```
 
-### Create Your First Widget (Step-by-Step)
+### Create Your First Widget (Steps)
+1. Define config & data schema (Zod recommended).
+2. Implement a fetcher (server-side).
+3. Build a presentational component using `DashboardWidgetProps`.
+4. Register it (`src/widgets/index.ts`).
+5. Add to a dashboard layout.
 
-1. Define config & data schema (optional but recommended).
-2. Add a fetcher (server-side preferred).
-3. Build a presentational component respecting `DashboardWidgetProps`.
-4. Register it in a central `widgets/index.ts`.
-5. Reference it in a dashboard layout JSON / array.
-
+Example:
 ```ts
-// src/widgets/timeSeries/widget.tsx
 import { z } from 'zod';
 
 const Point = z.object({ t: z.string(), value: z.number() });
@@ -201,19 +269,19 @@ export async function fetchTimeSeries(cfg: TimeSeriesConfig) {
   return TimeSeries.parse(await r.json());
 }
 
-export function TimeSeriesWidget(props: DashboardWidgetProps<TimeSeriesConfig, z.infer<typeof TimeSeries>>) {
+export function TimeSeriesWidget(
+  props: DashboardWidgetProps<TimeSeriesConfig, z.infer<typeof TimeSeries>>
+) {
   if (props.loading) return <div>Loading…</div>;
   if (props.error) return <div>Error: {props.error.message}</div>;
   return (
     <div className="widget">
       <h3>{props.title}</h3>
-      {/* Replace with actual chart lib */}
       <pre>{JSON.stringify(props.data?.slice(0, 5), null, 2)}</pre>
     </div>
   );
 }
 
-// registration
 registerWidget({
   type: 'time-series',
   displayName: 'Time Series',
@@ -222,13 +290,16 @@ registerWidget({
 });
 ```
 
+[⬆ Back to Top](#readme-top)
+
 ---
 
+<a id="data-layer"></a>
 ## 🧵 Data Layer
 
-Basic pattern now: `fetcher -> (optional) schema validate -> pass data to component`.
+Pattern: `fetcher → (optional) adapter → schema validation → widget`.
 
-Suggested layering (incremental):
+Suggested layering:
 ```
 Fetcher (raw IO)
   ↓
@@ -239,16 +310,13 @@ Schema validation (Zod)
 Widget consumption
 ```
 
-Example adapter:
-
+Adapter example:
 ```ts
-// src/data/adapters/normalizeMetric.ts
 import { z } from 'zod';
 
 const ExternalMetric = z.object({ timestamp: z.string(), val: z.number() });
 const ExternalMetricArray = z.array(ExternalMetric);
 
-// Normalized internal shape
 export const InternalPoint = z.object({ t: z.date(), value: z.number() });
 export const InternalSeries = z.array(InternalPoint);
 
@@ -256,51 +324,49 @@ export async function loadMetric(name: string) {
   const r = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/v2/metric/${name}`);
   if (!r.ok) throw new Error('Fetch failed');
   const raw = ExternalMetricArray.parse(await r.json());
-  return InternalSeries.parse(
-    raw.map(p => ({ t: new Date(p.timestamp), value: p.val }))
-  );
+  return InternalSeries.parse(raw.map(p => ({ t: new Date(p.timestamp), value: p.val })));
 }
 ```
 
----
-
-## 🏗 Architecture
-
-```
-Routes / Layouts (Next.js server & client boundaries)
-    ↓
-Widgets Layer (registry, typed config, rendering)
-    ↓
-Data Layer (fetchers, adapters, validation, caching)
-    ↓
-Integration Boundary (REST / GraphQL / Future streaming)
-```
-
-Execution flow (request-time):
-1. Dashboard route resolves layout definition
-2. Widget registry enumerates required fetchers
-3. Fetchers run (server preferred; fallback client)
-4. Data validated & normalized
-5. Components render with loading / error states
-6. (Future) Realtime patches hydrate via SSE / WS
+[⬆ Back to Top](#readme-top)
 
 ---
 
+<a id="extensibility"></a>
+## 🧱 Extensibility & Future Plugins
+Planned plugin manifest could allow:
+- Discovery-based widget loading.
+- Versioned adapter contracts.
+- Optional sandbox isolation for 3rd-party code.
+
+Interim approach: maintain a curated internal registry.
+
+[⬆ Back to Top](#readme-top)
+
+---
+
+<a id="environment-variables"></a>
 ## ⚙️ Environment Variables
 
 | Variable | Scope | Purpose | Required |
 |----------|-------|---------|----------|
 | NEXT_PUBLIC_APP_NAME | Public | Display name | ✅ |
 | NEXT_PUBLIC_API_BASE | Public | Base API URL | ✅ |
-| AUTH_SECRET | Server | Auth/session signing | Optional (if auth used) |
+| AUTH_SECRET | Server | Auth/session signing | Optional (if auth added) |
 | NEXTAUTH_URL | Server | Auth callback base | Optional |
 | SENTRY_DSN | Server | Error tracing | Optional |
 | LOG_LEVEL | Server | Logging verbosity | Optional |
 
-> Keep secrets out of Git history. Use platform secret managers.
+Tips:
+- Never commit secrets.
+- For multi-env deployments, use platform-specific secret managers.
+- Prefer server components & route handlers for sensitive access.
+
+[⬆ Back to Top](#readme-top)
 
 ---
 
+<a id="quality--performance"></a>
 ## 🧪 Quality & Performance
 
 | Concern | Current Tactics |
@@ -308,19 +374,23 @@ Execution flow (request-time):
 | Type Safety | Strict TS config |
 | Validation | Zod-ready pattern |
 | Bundle Control | Dynamic imports for heavy libs |
-| Caching | (Add strategy: SWR / custom) |
-| Monitoring | (Optional) Sentry / metrics |
-| Static vs Client | Prefer server components where possible |
+| Caching | (Add strategy: SWR / RSC caching) |
+| Monitoring | (Optional) Sentry / custom metrics |
+| Static vs Client | Prefer server components |
 
-Performance checklist (adapt as you implement):
+Performance Checklist (adapt as implemented):
 - [ ] Dynamic import large chart libs
 - [ ] Stable cache keys to avoid duplicate fetches
 - [ ] Memoize pure components
 - [ ] Remove unused client components
-- [ ] Lighthouse pass (Perf / A11y)
+- [ ] Lighthouse: Performance & A11y
+- [ ] Zod schemas co-located & re-used (avoid duplication)
+
+[⬆ Back to Top](#readme-top)
 
 ---
 
+<a id="roadmap"></a>
 ## 🗺 Roadmap
 
 | Milestone | Description | Status |
@@ -339,22 +409,30 @@ Backlog Ideas:
 - Theming documentation
 - CI pipeline (lint / type / build)
 - Dataset seeding script
+- Security hardening (headers + rate limit)
+- Docs site (e.g. Nextra / Docusaurus)
+
+[⬆ Back to Top](#readme-top)
 
 ---
 
+<a id="security-notes"></a>
 ## 🔐 Security Notes
 
 | Topic | Guidance |
 |-------|----------|
-| Secrets | Use deployment provider secret store |
+| Secrets | Use provider secret stores |
 | Validation | Always schema-validate external data |
 | Auth | Centralize session + middleware (when added) |
 | Rate Limiting | Add API middleware (sliding window / token bucket) |
-| Headers | Apply strict headers in `next.config.js` or middleware |
+| Headers | Add strict headers (CSP, Permissions-Policy) |
 | Disclosure | Add a SECURITY.md if accepting reports |
+
+[⬆ Back to Top](#readme-top)
 
 ---
 
+<a id="scripts"></a>
 ## 🛠 Scripts
 
 | Command | Purpose |
@@ -367,23 +445,34 @@ Backlog Ideas:
 | `pnpm format` | Prettier formatting |
 | `pnpm test` | (Add when tests land) |
 
+[⬆ Back to Top](#readme-top)
+
 ---
 
+<a id="screenshots"></a>
 ## 🖼 Screenshots
 
 | Light | Dark |
 |-------|------|
 | ![Light Placeholder](public/docs/screenshot-light.png) | ![Dark Placeholder](public/docs/screenshot-dark.png) |
 
-> Replace with real captures once UI stabilizes. Consider adding a GIF for drag/drop or widget add flow.
+> Replace with real captures once UI stabilizes. Consider a GIF for drag/drop or widget add flow.
+
+[⬆ Back to Top](#readme-top)
 
 ---
 
+<a id="faq"></a>
 ## ❓ FAQ
 
 <details>
+<summary><strong>Why didn’t the internal links work earlier?</strong></summary>
+Likely due to environment-specific rendering (some platforms strip emojis or alter slug rules). Explicit <code>&lt;a id="..."></code> anchors now ensure consistent behavior.
+</details>
+
+<details>
 <summary><strong>Can I plug in any chart library?</strong></summary>
-Yes—wrap the library in a widget component, keep props minimal & typed, and register it.
+Yes—wrap the lib in a widget component; keep props minimal & typed; register it.
 </details>
 
 <details>
@@ -392,12 +481,35 @@ Not yet; roadmap includes SSE/WebSocket adapters.
 </details>
 
 <details>
-<summary><strong>Multi-tenant?</strong></summary>
-Patterns will emerge with namespaced layouts + RBAC (planned).
+<summary><strong>Multi-tenant roadmap?</strong></summary>
+Namespaced layouts + RBAC patterns are planned.
 </details>
+
+<details>
+<summary><strong>Can I SSR everything?</strong></summary>
+Yes; prefer server components for data fetch/validation; hydrate only interactive parts.
+</details>
+
+[⬆ Back to Top](#readme-top)
 
 ---
 
+<a id="troubleshooting"></a>
+## 🧯 Troubleshooting
+
+| Symptom | Possible Cause | Action |
+|---------|----------------|-------|
+| Anchors not scrolling | Host modifies slugs | Use explicit `id` anchors (now added) |
+| Fetcher errors | Wrong API base | Verify `NEXT_PUBLIC_API_BASE` |
+| Layout mismatch | Missing widget type | Ensure widget registered before layout load |
+| Type errors | Outdated types | Run `pnpm type-check` & align schemas |
+| Large bundle | Heavy chart eager import | Convert to dynamic import with suspense |
+
+[⬆ Back to Top](#readme-top)
+
+---
+
+<a id="contributing"></a>
 ## 🤝 Contributing
 
 1. Fork & clone
@@ -409,30 +521,40 @@ Patterns will emerge with namespaced layouts + RBAC (planned).
    - Screenshots (UI changes)
    - Notes on performance / validation impacts
 
-Commit examples:
+Commit Examples:
 ```
 feat(widgets): add heatmap widget
 fix(data): handle 429 rate limiting
 chore(ci): introduce dependency caching
 ```
 
+> Consider adding a [CONTRIBUTING.md](./CONTRIBUTING.md) & CODE_OF_CONDUCT.md for clarity.
+
+[⬆ Back to Top](#readme-top)
+
 ---
 
+<a id="license"></a>
 ## 📄 License
 
-MIT (include a LICENSE file at repo root).  
+MIT (ensure a LICENSE file at repo root).  
 Attribution appreciated but not required.
+
+[⬆ Back to Top](#readme-top)
 
 ---
 
+<a id="acknowledgements"></a>
 ## 🙌 Acknowledgements
-
 - Next.js & React communities
 - Open-source visualization ecosystems
 - Early contributors & reviewers
 
+[⬆ Back to Top](#readme-top)
+
 ---
 
+<a id="quick-reference"></a>
 ## 🔁 Quick Reference
 
 ```bash
