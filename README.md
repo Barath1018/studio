@@ -2,7 +2,7 @@
 Tip: Add a logo at /public/logo.svg and uncomment below for stronger branding.
 
 <p align="center">
-  <img src="public/logo.svg" width="120" alt="InsightEdge Studio Logo" />
+  <img src="public/logo.svg" width="120" alt="InsightEdge" />
 </p>
 -->
 
@@ -25,9 +25,9 @@ Tip: Add a logo at /public/logo.svg and uncomment below for stronger branding.
   <a href="#quick-start">Quick Start</a> •
   <a href="#why-insightedge">Why?</a> •
   <a href="#features">Features</a> •
-  <a href="#architecture">Architecture</a> •
+  <a href="#architecture-conceptual">Architecture</a> •
   <a href="#widgets">Widgets</a> •
-  <a href="#roadmap">Roadmap</a> •
+  <a href="#roadmap-indicative">Roadmap</a> •
   <a href="#contributing">Contribute</a>
 </p>
 
@@ -40,7 +40,7 @@ Tip: Add a logo at /public/logo.svg and uncomment below for stronger branding.
 | Build dashboards fast | Register widgets + compose layouts |
 | Keep code maintainable | Strict TypeScript + clear layering |
 | Avoid vendor lock‑in | Pluggable data & chart adapters |
-| Scale features incrementally | Start simple → add auth, streaming, multi‑tenant |
+| Scale features incrementally | Start simple → add auth, streaming, multi-tenant |
 | Ship confidently | Validation & performance minded design |
 
 > Designed for product teams that want “BI-like insight” without dragging in an entire monolithic platform.
@@ -53,7 +53,7 @@ Tip: Add a logo at /public/logo.svg and uncomment below for stronger branding.
 git clone https://github.com/Barath1018/studio
 cd studio
 pnpm install
-cp .env.example .env.local  # if provided
+cp .env.example .env.local  # if the example file exists
 pnpm dev
 # → http://localhost:3000
 ```
@@ -222,11 +222,11 @@ Flow Example:
 
 Performance checklist:
 
-- [ ] Dynamic import large libs (`import('...')`)  
-- [ ] Avoid duplicate fetches (stable cache keys)  
-- [ ] Use `React.memo` where pure  
-- [ ] Eliminate unnecessary client JS in static routes  
-- [ ] Lighthouse pass (Perf / Accessibility)  
+- [ ] Dynamic import large libs (`import('...')`)
+- [ ] Avoid duplicate fetches (stable cache keys)
+- [ ] Use `React.memo` where pure
+- [ ] Eliminate unnecessary client JS in static routes
+- [ ] Lighthouse pass (Perf / Accessibility)
 
 ---
 
@@ -243,12 +243,12 @@ Performance checklist:
 
 Task Backlog:
 
-- [ ] Add CONTRIBUTING.md / CODE_OF_CONDUCT.md  
-- [ ] Add test scaffold (Vitest + Testing Library)  
-- [ ] Introduce visual regression (Playwright / Storybook)  
-- [ ] Documentation: theming & tokens  
-- [ ] Add CI status badge (real workflow)  
-- [ ] Provide example dataset seeding script  
+- [ ] Add CONTRIBUTING.md / CODE_OF_CONDUCT.md
+- [ ] Add test scaffold (Vitest + Testing Library)
+- [ ] Introduce visual regression (Playwright / Storybook)
+- [ ] Documentation: theming & tokens
+- [ ] Add CI status badge (real workflow)
+- [ ] Provide example dataset seeding script
 
 ---
 
@@ -292,7 +292,7 @@ Add a `SECURITY.md` for coordinated disclosure.
    - Screenshots (UI changes)
    - Checklist (docs / tests done)
 
-Commit style (example):
+Commit style (examples):
 
 ```
 feat(widgets): add heatmap widget
@@ -333,7 +333,7 @@ Foundational patterns exist (namespace in config). Full RBAC planned in roadmap.
 
 ## 📄 License
 
-MIT — see LICENSE (add the file if missing).  
+MIT — see [LICENSE](LICENSE).  
 Attribution appreciated but not required.
 
 ---
