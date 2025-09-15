@@ -1,0 +1,8 @@
+# App Hosting Configuration
+# InsightEdge Studio deployment settings
+
+app:
+  name: insightedge-studio
+  version: 1.0.0
+  environment: production
+
