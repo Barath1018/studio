@@ -93,7 +93,14 @@ export default function Dashboard() {
   
   const iconMap = getIconMap();
   const [activeTab, setActiveTab] = useState('overview');
-  const [customCharts, setCustomCharts] = useState<any[]>([]);
+  const [customCharts, setCustomCharts] = useState<any[]>(() => {
+    try {
+      const raw = localStorage.getItem('customCharts');
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
 
   const handleFileProcessed = async (data: BusinessData) => {
     setBusinessData(data);
@@ -114,7 +121,11 @@ export default function Dashboard() {
   };
 
   const handleChartCreated = (chartConfig: any) => {
-    setCustomCharts(prev => [...prev, { ...chartConfig, id: Date.now() }]);
+    setCustomCharts(prev => {
+      const next = [{ ...chartConfig, id: Date.now() }, ...prev].slice(0, 6);
+      try { localStorage.setItem('customCharts', JSON.stringify(next)); } catch {}
+      return next;
+    });
   };
 
   const renderEmptyState = () => (

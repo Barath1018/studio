@@ -10,7 +10,8 @@ import { getAuth } from 'firebase/auth';
 const firebaseConfig = {
   projectId: 'visionboard-e3o1o',
   appId: '1:979638584673:web:2cc532a5a4632488c5b120',
-  storageBucket: 'visionboard-e3o1o.firebasestorage.app',
+  // Use the bucket name (appspot.com), not the download domain
+  storageBucket: 'visionboard-e3o1o.appspot.com',
   apiKey: 'AIzaSyCsnXq7g5TjPJsSItDH6Kf1G_CrlFGCEik',
   authDomain: 'visionboard-e3o1o.firebaseapp.com',
   measurementId: '',
