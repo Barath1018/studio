@@ -155,19 +155,22 @@ export default function Dashboard() {
   const renderDashboard = () => (
     <div className="space-y-6">
       {/* Header with navigation */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Advanced Business Intelligence Dashboard</h1>
-          <p className="text-sm text-muted-foreground">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-lg sm:text-2xl font-semibold leading-tight truncate">
+            Advanced Business Intelligence Dashboard
+          </h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Analyzing {businessData?.data.length.toLocaleString()} records with AI-powered insights
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <div className="flex items-center mr-2">
               <DataPersistenceStatus />
             </div>
             <Button
               variant="outline"
+              className="w-full sm:w-auto"
               onClick={() => {
                               setBusinessData(null);
               setAnalyzedMetrics(null);
@@ -179,6 +182,7 @@ export default function Dashboard() {
           </Button>
           <Button
             variant="outline"
+            className="w-full sm:w-auto"
             onClick={() => setActiveTab('export')}
           >
             <Download className="h-4 w-4 mr-2" />
@@ -189,13 +193,13 @@ export default function Dashboard() {
 
       {/* Main Navigation Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="ai-insights">AI Insights</TabsTrigger>
-          <TabsTrigger value="charts">Custom Charts</TabsTrigger>
-          <TabsTrigger value="data">Data Explorer</TabsTrigger>
-          <TabsTrigger value="export">Export</TabsTrigger>
+        <TabsList className="w-full flex gap-2 overflow-x-auto sm:grid sm:grid-cols-6 sm:overflow-visible">
+          <TabsTrigger value="overview" className="flex-shrink-0">Overview</TabsTrigger>
+          <TabsTrigger value="analytics" className="flex-shrink-0">Analytics</TabsTrigger>
+          <TabsTrigger value="ai-insights" className="flex-shrink-0">AI Insights</TabsTrigger>
+          <TabsTrigger value="charts" className="flex-shrink-0">Custom Charts</TabsTrigger>
+          <TabsTrigger value="data" className="flex-shrink-0">Data Explorer</TabsTrigger>
+          <TabsTrigger value="export" className="flex-shrink-0">Export</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}

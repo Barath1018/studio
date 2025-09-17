@@ -25,7 +25,11 @@ export function DataPersistenceStatus() {
       };
     }
 
-    if (user && fileUrl) {
+    // Consider the user authenticated with Google as having Firebase persistence,
+    // regardless of whether a specific file URL has been created yet.
+    const isGoogleAuthenticated = !!user?.providerData?.some((provider) => provider.providerId === 'google.com');
+
+    if (isGoogleAuthenticated) {
       return {
         label: 'Firebase',
         variant: 'default' as const,
@@ -47,7 +51,8 @@ export function DataPersistenceStatus() {
     if (!businessData) {
       return <HelpCircle size={16} />;
     }
-    return user && fileUrl ? 
+    const isGoogleAuthenticated = !!user?.providerData?.some((provider) => provider.providerId === 'google.com');
+    return isGoogleAuthenticated ? 
       <Cloud size={16} className="text-green-500" /> : 
       <X size={16} className="text-red-500" />;
   };

@@ -229,17 +229,29 @@ body {
     pointer-events: none;
   }
   
-  /* Fix the main sidebar container positioning */
-  .group.peer[data-state] {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    z-index: 50 !important;
+  /* Fix the main sidebar container positioning (desktop and up only) */
+  @media (min-width: 768px) {
+    .group.peer[data-state] {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      z-index: 50 !important;
+    }
+    /* Adjust main content to account for fixed sidebar (desktop) */
+    main[class*="peer-data"] {
+      margin-left: var(--sidebar-width) !important;
+    }
   }
-  
-  /* Adjust main content to account for fixed sidebar */
-  main[class*="peer-data"] {
-    margin-left: var(--sidebar-width) !important;
+
+  /* Explicit mobile overrides to ensure full-width content */
+  @media (max-width: 767px) {
+    .group.peer[data-state] {
+      position: static !important;
+    }
+    main[class*="peer-data"] {
+      margin-left: 0 !important;
+      width: 100% !important;
+    }
   }
   
   /* Light sidebar content */
